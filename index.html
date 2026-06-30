@@ -805,7 +805,7 @@
             let ivc = getMsValue('liv_ivc'); if(ivc) p.push("нижня порожниста вена: " + ivc);
             let hv = getMsValue('liv_hv'); if(hv) p.push("печінкові вени: " + hv);
 
-            if(p.length) h += `<p><strong>Печінка:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Печінка:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 2. ЖОВЧНИЙ МІХУР
@@ -827,7 +827,7 @@
             let incl = getMsValue('gb_incl'); let inclMm = document.getElementById('gb_incl_mm').value; let inclProp = getMsValue('gb_incl_prop');
             if(incl || inclMm || inclProp) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? ", " + formatMM(inclMm) : "") + (inclProp ? ", " + inclProp : "")).trim());
 
-            if(p.length) h += `<p><strong>Жовчний міхур:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Жовчний міхур:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 3. ХОЛЕДОХ
@@ -838,7 +838,7 @@
             if(exp || mm) p.push("розширення: " + ((exp ? exp : "") + (mm ? " " + formatMM(mm) : "")).trim());
             let lumen = getMsValue('cd_lumen'); if(lumen) p.push("видимий просвіт: " + lumen);
             
-            if(p.length) h += `<p><strong>Холедох:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Холедох:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 4. ПІДШЛУНКОВА ЗАЛОЗА
@@ -867,7 +867,7 @@
             let duct = getMsValue('pan_duct'); let ductMm = document.getElementById('pan_duct_mm').value;
             if(duct || ductMm) p.push("панкреатична протока: " + ((duct ? duct : "") + (ductMm ? ", " + formatMM(ductMm) : "")).trim());
 
-            if(p.length) h += `<p><strong>Підшлункова залоза:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Підшлункова залоза:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 5. СЕЛЕЗІНКА
@@ -895,7 +895,7 @@
             let vein = getMsValue('spl_vein'); let veinMm = document.getElementById('spl_vein_mm').value;
             if(vein || veinMm) p.push("селезінкова вена: " + ((vein ? vein : "") + (veinMm ? " " + formatMM(veinMm) : "")).trim());
 
-            if(p.length) h += `<p><strong>Селезінка:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Селезінка:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 6. ПРАВА НИРКА
@@ -937,7 +937,7 @@
             let ur = getMsValue('rk_ur'); let urMm = document.getElementById('rk_ur_mm').value;
             if(ur || urMm) p.push("сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
 
-            if(p.length) h += `<p><strong>Права нирка:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Права нирка:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 7. ЛІВА НИРКА
@@ -979,7 +979,7 @@
             let ur = getMsValue('lk_ur'); let urMm = document.getElementById('lk_ur_mm').value;
             if(ur || urMm) p.push("сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
 
-            if(p.length) h += `<p><strong>Ліва нирка:</strong> ${p.join('. ')}.</p>`;
+            if(p.length) h += `<p><strong>Ліва нирка:</strong> ${p.join('; ')}.</p>`;
         }
 
         // 8. ВІЛЬНА РІДИНА
