@@ -1243,7 +1243,7 @@
         if(btn) updateBtnText(el, btn);
     }
 
-    // Заповнення конкретного органу
+ // Заповнення конкретного органу
     function fillOrganNorm(org) {
         // Відкриваємо блок органу, якщо він закритий
         let chk = document.getElementById(`chk_${org}`);
@@ -1253,10 +1253,8 @@
             sec.style.display = 'block';
         }
 
-        // Очищаємо всі числові поля тільки в цьому блоці
-        if(sec) {
-            sec.querySelectorAll('input[type="number"]').forEach(inp => inp.value = '');
-        }
+        // Я ПРИБРАВ ЗВІДСИ КОД, ЯКИЙ СТИРАВ ЦИФРИ.
+        // Тепер розміри, які ви ввели вручну, залишаться на місці!
 
         // Визначаємо, який орган заповнювати
         switch(org) {
@@ -1346,7 +1344,9 @@
                 setSelect('lk_incl', ['відсутні']);
                 setSelect('lk_ur', ['не визначається']);
                 break;
-            
+            case 'fluid':
+                setSelect('free_fluid', ['відсутня']);
+                break;
         }
     }
 </script>
