@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Робоче місце лікаря УЗД (PRO)</title>
+    <style>
+        /* Базові стилі */
+        body { font-family: Arial, sans-serif; background: #f0f4f8; color: #000; margin: 0; padding: 0; }
+        
+        /* Навігація (Верхнє меню) */
+        .navbar {
+            background: #2c3e50;
+            padding: 15px 20px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10000;
+        }
+        .nav-btn {
+            background: #34495e;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: #3498db; }
+        .nav-btn.active { background: #3498db; font-weight: bold; }
+
+        /* Контейнер сторінок */
+        .page-container {
+            max-width: 1100px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Приховування неактивних сторінок */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Стилі для Головної сторінки (Вибір УЗД) */
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .home-card {
+            background: #fdfefe;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .home-card:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Стилі для форм */
+        h1 { text-align: center; color: #000; margin-bottom: 20px; font-size: 24px; margin-top: 0;}
+        h2 { color: #000; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; margin-top: 25px; font-size: 18px; background: #f9ebea; padding: 10px; border-radius: 5px;}
+        h2.thyroid-head { background: #e8f8f5; }
+        .row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-end; }
+        .field { display: flex; flex-direction: column; flex: 1; min-width: 250px; position: relative; }
+        .field.small { flex: 0.5; min-width: 100px; }
+        label { font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #333; }
+        input[type="text"], input[type="number"], .ms-btn, select, textarea { padding: 8px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; font-family: inherit; background: #fff; width: 100%; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: #3498db; outline: none; }
+        
+        /* Custom Multiselect */
+        .ms-container { position: relative; width: 100%; }
+        .ms-btn { display: flex; justify-content: space-between; align-items: center; cursor: pointer; min-height: 36px; background: #fff; }
+        .ms-btn span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90%; }
+        .ms-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #3498db; z-index: 9999; max-height: 250px; overflow-y: auto; border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 2px; }
+        .ms-dropdown.active { display: block; }
+        .ms-option { padding: 8px 10px; display: flex; align-items: flex-start; cursor: pointer; font-size: 13px; border-bottom: 1px solid #eee; }
+        .ms-option:hover { background: #e8f8f5; }
+        .ms-option input[type="checkbox"], .ms-option input[type="radio"] { margin-right: 8px; margin-top: 2px; width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .ms-custom-input { padding: 8px; border-bottom: 1px solid #ccc; background: #fdfefe; position: sticky; top: 0; z-index: 2; }
+        .ms-custom-input input { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 13px; box-sizing: border-box; }
+        
+        .calc-box { background: #fcfdfe; padding: 15px; border-radius: 8px; border: 1px solid #d5dbdb; margin-bottom: 15px; }
+        .dynamic-section { background: #fbfcfc; padding: 15px; border: 1px dashed #bdc3c7; border-radius: 8px; margin-bottom: 15px; }
+        .dynamic-item { background: white; padding: 15px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; position: relative; }
+        .remove-btn { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .add-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .generate-btn { display: block; width: 100%; background: #27ae60; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 30px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .generate-btn:hover { background: #2ecc71; }
+        .section-box { border: 1px solid #e5e7e9; padding: 15px; border-radius: 8px; margin-bottom: 10px; background: #fcfcfc;}
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <button class="nav-btn active" id="nav-home" onclick="switchPage('home')">🏠 Головна</button>
+    <button class="nav-btn" id="nav-thyroid" onclick="switchPage('thyroid')">Щитоподібна залоза</button>
+    <button class="nav-btn" id="nav-abd" onclick="switchPage('abd')">Органи черевної порожнини</button>
+    <button class="nav-btn" id="nav-mammary" onclick="switchPage('mammary')">Молочні залози</button>
+</div>
+
+<div class="page-container">
+
+    <div id="page-home" class="page active">
+        <h1>Оберіть тип дослідження</h1>
+        <div class="home-grid">
+            <div class="home-card" onclick="switchPage('thyroid')">УЗД Щитоподібної залози</div>
+            <div class="home-card" onclick="switchPage('abd')">УЗД Органів черевної порожнини (ОЧП)</div>
+            <div class="home-card" onclick="switchPage('mammary')">УЗД Молочних залоз</div>
+        </div>
+    </div>
+
+    <div id="page-thyroid" class="page">
+        <h1>ОПИС УЗД Щитоподібної залози</h1>
+
+        <h2 class="thyroid-head">1. Область та Візуалізація</h2>
+        <div class="row">
+            <div class="field">
+                <label>Область дослідження:</label>
+                <input type="text" id="p_region" value="Щитоподібна залоза">
+            </div>
+            <div class="field">
+                <label>Візуалізується:</label>
+                <div class="ms-container" id="ms_visual" data-options="візуалізується повністю|не візуалізується|видалена|права частка|ліва частка|перешийок|обидві частки|пірамідальний відросток|культя правої частки|культя лівої частки|залишкова тканина правої частки|залишкова тканина лівої частки"></div>
+            </div>
+            <div class="field">
+                <label>Розміщена:</label>
+                <div class="ms-container" id="ms_location" data-options="звичайно|низько|нижній полюс правої частки досягає рівня грудинно-ключичного зчленування|нижній полюс лівої частки досягає рівня грудинно-ключичного зчленування|верхній полюс лівої частки досягає рівня підщелепної слинної залози|верхній полюс правої частки досягає рівня підщелепної слинної залози|нижній полюс правої частки розташований загрудинно|нижній полюс лівої частки розташований загрудинно|трахея зміщена ліворуч|трахея зміщена праворуч"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="field"><label>Контур:</label><div class="ms-container" id="ms_contour" data-options="рівний|нерівний|чіткий|нечіткий"></div></div>
+            <div class="field"><label>Капсула:</label><div class="ms-container" id="ms_capsule" data-options="не ущільнена|ущільнена|потовщена|не потовщена"></div></div>
+        </div>
+
+        <h2 class="thyroid-head">2. Розміри та Об'єм</h2>
+        <div class="calc-box">
+            <div class="row">
+                <div class="field small">
+                    <label>Метод розрахунку:</label>
+                    <select id="calc_method" onchange="calcVol()" style="padding: 8px;">
+                        <option value="0.479">Brunn (0.479)</option>
+                        <option value="0.500">Mikі (0.500)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Права частка: стан</label><div class="ms-container" id="ms_r_type" data-single="true" data-options="права частка|культя правої частки|залишкова тканина правої частки|не визначається"></div></div>
+                <div class="field small"><label>Довжина (см)</label><input type="number" id="r_l" step="0.1" oninput="calcVol()"></div>
+                <div class="field small"><label>Товщ. (см)</label><input type="number" id="r_t" step="0.1" oninput="calcVol()"></div>
+                <div class="field small"><label>Ширина (см)</label><input type="number" id="r_w" step="0.1" oninput="calcVol()"></div>
+                <div class="field small"><label>Об'єм (см³)</label><input type="text" id="r_v" readonly style="background:#eee; font-weight:bold;"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ліва частка: стан</label><div class="ms-container" id="ms_l_type" data-single="true" data-options="ліва частка|культя лівої частки|залишкова тканина лівої частки|не визначається"></div></div>
+                <div class="field small"><label>Довжина (см)</label><input type="number" id="l_l" step="0.1" oninput="calcVol()"></div>
+                <div class="field small"><label>Товщ. (см)</label><input type="number" id="l_t" step="0.1" oninput="calcVol()"></div>
+                <div class="field small"><label>Ширина (см)</label><input type="number" id="l_w" step="0.1" oninput="calcVol()"></div>
+                <div class="field small"><label>Об'єм (см³)</label><input type="text" id="l_v" readonly style="background:#eee; font-weight:bold;"></div>
+            </div>
+            <div class="row">
+                <div class="field small"><label>Перешийок (стан):</label><div class="ms-container" id="ms_isthmus_state" data-single="true" data-options="візуалізується|не візуалізується|видалений"></div></div>
+                <div class="field small"><label>Перешийок (розмір, см):</label><input type="text" id="isthmus_cm" placeholder="Напр. 0.4"></div>
+            </div>
+        </div>
+
+        <h2 class="thyroid-head">3. Структура та Ехогенність</h2>
+        <div class="row">
+            <div class="field"><label>Ехогенність:</label><div class="ms-container" id="ms_echo" data-options="звичайна|середня|знижена|підвищена|змішаної ехогенності"></div></div>
+            <div class="field" style="flex: 2;"><label>Ехоструктура:</label><div class="ms-container" id="ms_structure" data-options="однорідна|неоднорідна|неоднорідна за рахунок дрібних гіпоехогенних ділянок|неоднорідна за рахунок крупних гіпоехогенних ділянок|неоднорідна за рахунок дрібних гіпоехогенних ділянок та помірних фіброзних змін|неоднорідна за рахунок дрібних гіпоехогенних ділянок та виражених фіброзних змін|неоднорідна за рахунок помірних фіброзних змін|неоднорідна за рахунок анехогенних ділянок|неоднорідна за рахунок виражених фіброзних змін|неоднорідна з крупними гіперехогенними включеннями з ехотінню|неоднорідна з крупними кальцинатами|неоднорідна за рахунок дрібних анехогенних та дрібних гіперехогенних включень|неоднорідна з гіпоехогенними ділянками|неоднорідна за рахунок дифузних фіброзних змін|неоднорідна за рахунок дрібних гіпоехогенних ділянок та дрібних анехогенних включень|неоднорідна за рахунок гіпоехогенних ділянок різних розмірів"></div></div>
+        </div>
+        <div class="row">
+            <div class="field"><label>Кровоплин щ/залози при КДК:</label><div class="ms-container" id="ms_kdk" data-options="не посилений|помірно посилений|значно посилений|посилений|звичайний"></div></div>
+        </div>
+
+        <h2 class="thyroid-head">4. Об'ємні утворення щитоподібної залози</h2>
+        <div class="row"><div class="field"><label>Загальний стан:</label><div class="ms-container" id="ms_n_general" data-single="true" data-options="Не виявлені.|Виявлені:"></div></div></div>
+        <div class="dynamic-section" id="nodules-section">
+            <button class="add-btn" onclick="addDynamicItem('nodules-section', 'nodule')">+ Додати утворення ЩЗ</button>
+        </div>
+
+        <h2 class="thyroid-head">5. Лімфатичні вузли</h2>
+        <div class="row"><div class="field"><label>Загальний стан ЛВ:</label><div class="ms-container" id="ms_ln_general" data-single="true" data-options="не візуалізуються|не змінені|візулізуються"></div></div></div>
+        <div class="dynamic-section" id="ln-section">
+            <button class="add-btn" onclick="addDynamicItem('ln-section', 'lymph')">+ Додати опис лімфовузлів</button>
+        </div>
+
+        <h2 class="thyroid-head">6. Прищитоподібні залози</h2>
+        <div class="row"><div class="field"><label>Загальний стан ПЩЗ:</label><div class="ms-container" id="ms_pt_general" data-single="true" data-options="не візуалізуються|візуалізуються"></div></div></div>
+        <div class="dynamic-section" id="pt-section">
+            <button class="add-btn" onclick="addDynamicItem('pt-section', 'parathyroid')">+ Додати прищитоподібну залозу</button>
+        </div>
+
+        <h2 class="thyroid-head">7. Додаткові утворення шиї</h2>
+        <div class="row"><div class="field"><label>Загальний стан:</label><div class="ms-container" id="ms_nm_general" data-single="true" data-options="не виявлені|Виявлені локалізація:"></div></div></div>
+        <div class="dynamic-section" id="nm-section">
+            <button class="add-btn" onclick="addDynamicItem('nm-section', 'neckmass')">+ Додати додаткове утворення шиї</button>
+        </div>
+
+        <h2 class="thyroid-head">8. Заключення</h2>
+        <div class="row">
+            <div class="field">
+                <label>УЗ-ознаки:</label>
+                <div class="ms-container" id="ms_c_signs" data-options="вогнищевого утворення щитоподібної залози|вузлового зобу|лівобічного вузлового зобу|правобічного вузлового зобу|змішаного зобу|дифузного зобу|дифузного токсичного зобу|багатовузлового зобу|гіпоплазії щитоподібної залози|гіперплазії щитоподібної залози|гіпоплазії правої частки щитоподібної залози|гіпоплазії лівої частки щитоподібної залози|аплазії правої частки щитоподібної залози|аплазії лівої частки щитоподібної залози|рецидивного вузлового зобу|хр.тиреоїдиту|підгострого тиреоїдиту|лімфоденопатії|лімфогранулематоз|змінені лімфовузли шиї зліва|змінені лімфовузли шиї справа|серединної кісти шиї|бокової кісти шиї|ліпоми шиї|новоутворення шиї|АІТ|гіперплазії лімфатичних вузлів шиї|стан після тиреоїдектомії|стан після резекції щитоподібної залози"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="field"><label>EU-TIRADS:</label><div class="ms-container" id="ms_c_tirads" data-single="true" data-options="1|2|3|4|5"></div></div>
+            <div class="field"><label>Висновок (свій текст):</label><input type="text" id="c_conclusion" placeholder="..."></div>
+        </div>
+        <div class="row">
+            <div class="field"><label>Рекомендовано:</label><div class="ms-container" id="ms_c_recom" data-options="- консультація ендокринолога|- консультація ендокринолога-хірурга|- ТАПБ (УЗ-контроль)|- УЗ-контроль через 3 місяці|- УЗ-контроль через 6 місяців|- УЗ-контроль через 9 місяців|- УЗ-контроль через 12 місяців"></div></div>
+        </div>
+
+        <button class="generate-btn" id="generate-btn-thyroid" onclick="generateThyroidReport()">📝 ЗГЕНЕРУВАТИ ТА СКОПІЮВАТИ (ЩИТОПОДІБНА)</button>
+    </div>
+
+    <div id="page-abd" class="page">
+        <h1>ОПИС УЗД Органів черевної порожнини</h1>
+
+        <h2><label><input type="checkbox" id="chk_liv" onchange="toggleSec('sec_liv')"> 1. Печінка</label></h2>
+        <div class="section-box" id="sec_liv" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Розміщення:</label><div class="ms-container" id="liv_loc" data-single="true" data-options="звичайне"></div></div>
+                <div class="field"><label>Форма:</label><div class="ms-container" id="liv_form" data-single="true" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Розміри:</label><div class="ms-container" id="liv_size_state" data-single="true" data-options="не збільшені|збільшені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field small"><label>Пр. частка КВР (мм):</label><input type="number" id="liv_kvr"></div>
+                <div class="field small"><label>Пр. частка ПЗР (мм):</label><input type="number" id="liv_pzr"></div>
+                <div class="field small"><label>Лів. частка товщ. (мм):</label><input type="number" id="liv_l_th"></div>
+                <div class="field"><label>Контури:</label><div class="ms-container" id="liv_cont" data-options="рівні|нерівні|бугристі|чіткі|нечіткі"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Структура:</label><div class="ms-container" id="liv_struct" data-options="однорідна|неоднорідна|зерниста"></div></div>
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" id="liv_echo" data-options="звичайна|середня|підвищена|знижена"></div></div>
+                <div class="field"><label>Затухання УЗ:</label><div class="ms-container" id="liv_att" data-options="відмічається|виражене в глибоких відділах|не відмічається"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Судинна архітектоніка:</label><div class="ms-container" id="liv_vasc" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Внутр. жовчні протоки:</label><div class="ms-container" id="liv_ducts" data-options="не розширені|розширені"></div></div>
+                <div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="liv_mass" data-options="не виявлені|виявлені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field small"><label>Портальна вена:</label><div class="ms-container" id="liv_pv_st" data-options="не розширена|розширена"></div></div>
+                <div class="field small"><label>Діаметр ПВ (мм):</label><input type="number" id="liv_pv_mm"></div>
+                <div class="field small"><label>Нижня порожн. вена:</label><div class="ms-container" id="liv_ivc" data-options="не розширена|розширена"></div></div>
+                <div class="field small"><label>Печінкові вени:</label><div class="ms-container" id="liv_hv" data-options="не розширені|розширені"></div></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_gb" onchange="toggleSec('sec_gb')"> 2. Жовчний міхур</label></h2>
+        <div class="section-box" id="sec_gb" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Стан:</label><div class="ms-container" id="gb_state" data-single="true" data-options="візуалізований|не візуалізований|видалений"></div></div>
+                <div class="field"><label>Розміщення:</label><div class="ms-container" id="gb_loc" data-options="звичайне"></div></div>
+                <div class="field"><label>Форма:</label><div class="ms-container" id="gb_form" data-options="овальна|грушоподібна|деформована|перегин в шийці|перегин в тілі|перегин в дні"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Розміри стан:</label><div class="ms-container" id="gb_size_st" data-options="не збільшений|збільшений"></div></div>
+                <div class="field small"><label>Довжина (мм):</label><input type="number" id="gb_l"></div>
+                <div class="field small"><label>Ширина (мм):</label><input type="number" id="gb_w"></div>
+                <div class="field"><label>Стінки:</label><div class="ms-container" id="gb_walls" data-options="не ущільнені|ущільнені|не потовщені|потовщені"></div></div>
+                <div class="field small"><label>Товщ. до (мм):</label><input type="number" id="gb_wall_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>В просвіті:</label><div class="ms-container" id="gb_lumen" data-options="однорідний анехогенний вміст|гомогенний вміст|замаскоподібна жовч|неоднорідний вміст"></div></div>
+                <div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="gb_mass" data-options="не виявлені|виявлені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Гіперехогенні включення:</label><div class="ms-container" id="gb_incl" data-options="відсутні|наявні|No 1|No 2|No 3|декілька|множинні"></div></div>
+                <div class="field small"><label>Розмір вкл. (мм):</label><input type="number" id="gb_incl_mm"></div>
+                <div class="field"><label>Властивості вкл.:</label><div class="ms-container" id="gb_incl_prop" data-options="зміщуваність є|зміщуваності немає|з акустичною тінню|без акустичної тіні"></div></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_cd" onchange="toggleSec('sec_cd')"> 3. Холедох</label></h2>
+        <div class="section-box" id="sec_cd" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Стан:</label><div class="ms-container" id="cd_state" data-single="true" data-options="візуалізується|не візуалізується"></div></div>
+                <div class="field"><label>Розширення:</label><div class="ms-container" id="cd_exp" data-options="не розширений|розширений|нерівномірно-розширений"></div></div>
+                <div class="field small"><label>Діаметр до (мм):</label><input type="number" id="cd_mm"></div>
+                <div class="field"><label>Видимий просвіт:</label><div class="ms-container" id="cd_lumen" data-options="анехогенний|однорідний|неоднорідний|гомогенний|негомогенний"></div></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_pan" onchange="toggleSec('sec_pan')"> 4. Підшлункова залоза</label></h2>
+        <div class="section-box" id="sec_pan" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Візуалізація:</label><div class="ms-container" id="pan_vis" data-single="true" data-options="на всьому протязі|візуалізується фрагментовано через метеоризм|не візуалізується|видалена"></div></div>
+                <div class="field"><label>Форма:</label><div class="ms-container" id="pan_form" data-single="true" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Розміри:</label><div class="ms-container" id="pan_size_st" data-single="true" data-options="не збільшені|збільшені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field small"><label>Головка (мм):</label><input type="number" id="pan_head"></div>
+                <div class="field small"><label>Тіло (мм):</label><input type="number" id="pan_body"></div>
+                <div class="field small"><label>Хвіст (мм):</label><input type="number" id="pan_tail"></div>
+                <div class="field"><label>Контури:</label><div class="ms-container" id="pan_cont" data-options="рівні|не рівні|чіткі|нечіткі|хвилясті|зубчасті"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Паренхіма:</label><div class="ms-container" id="pan_par" data-options="однорідна|неоднорідна|зерниста|тяжиста"></div></div>
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" id="pan_echo" data-options="звичайна|підвищена|знижена"></div></div>
+                <div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="pan_mass" data-options="не виявлені|виявлені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Панкреатична протока:</label><div class="ms-container" id="pan_duct" data-options="візуалізується на всьому протязі|фрагментовано|не розширена|розширена|не візуалізується"></div></div>
+                <div class="field small"><label>Протока (мм):</label><input type="number" id="pan_duct_mm"></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_spl" onchange="toggleSec('sec_spl')"> 5. Селезінка</label></h2>
+        <div class="section-box" id="sec_spl" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Візуалізація:</label><div class="ms-container" id="spl_vis" data-single="true" data-options="візуалізується|не візуалізується|видалена"></div></div>
+                <div class="field"><label>Форма:</label><div class="ms-container" id="spl_form" data-single="true" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Розміри стан:</label><div class="ms-container" id="spl_size_st" data-single="true" data-options="не збільшені|збільшені"></div></div>
+                <div class="field small"><label>Довжина (мм):</label><input type="number" id="spl_l"></div>
+                <div class="field small"><label>Товщина (мм):</label><input type="number" id="spl_t"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Контури:</label><div class="ms-container" id="spl_cont" data-options="рівні|нерівні|чіткі|нечіткі"></div></div>
+                <div class="field"><label>Структура:</label><div class="ms-container" id="spl_struct" data-options="однорідна|неоднорідна"></div></div>
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" id="spl_echo" data-options="звичайна|підвищена|знижена"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Селезінкова вена:</label><div class="ms-container" id="spl_vein" data-options="не розширена|розширена"></div></div>
+                <div class="field small"><label>Вена (мм):</label><input type="number" id="spl_vein_mm"></div>
+                <div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="spl_mass" data-options="не виявлені|виявлені"></div></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_rk" onchange="toggleSec('sec_rk')"> 6. Права нирка</label></h2>
+        <div class="section-box" id="sec_rk" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Стан:</label><div class="ms-container" id="rk_vis" data-single="true" data-options="візуалізована|не візуалізована|видалена"></div></div>
+                <div class="field"><label>Розміщення:</label><div class="ms-container" id="rk_loc" data-options="звичайне|опущена"></div></div>
+                <div class="field"><label>Рухливість:</label><div class="ms-container" id="rk_mob" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Форма:</label><div class="ms-container" id="rk_form" data-options="звичайна|не змінена|змінена"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Контури:</label><div class="ms-container" id="rk_cont" data-options="рівні|нерівні|чіткі|нечіткі"></div></div>
+                <div class="field"><label>Розміри:</label><div class="ms-container" id="rk_size_st" data-options="не збільшені|збільшені"></div></div>
+                <div class="field small"><label>Довжина (мм):</label><input type="number" id="rk_l"></div>
+                <div class="field small"><label>Ширина (мм):</label><input type="number" id="rk_w"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" id="rk_echo" data-options="звичайна|підвищена|знижена"></div></div>
+                <div class="field"><label>Структура:</label><div class="ms-container" id="rk_struct" data-options="однорідна|неоднорідна"></div></div>
+                <div class="field"><label>Товщ. паренхіми:</label><div class="ms-container" id="rk_par_st" data-options="не змінена|змінена"></div></div>
+                <div class="field small"><label>Паренхіма (мм):</label><input type="number" id="rk_par_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Кортико-медулярна диференціація:</label><div class="ms-container" id="rk_cmd" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Центр. комплекс:</label><div class="ms-container" id="rk_ck" data-options="не змінений|змінений|ущільнений"></div></div>
+                <div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="rk_mass" data-options="не виявлені|виявлені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Чашечки:</label><div class="ms-container" id="rk_cal" data-options="не розширені|розширені"></div></div>
+                <div class="field small"><label>Чаш. (мм):</label><input type="number" id="rk_cal_mm"></div>
+                <div class="field"><label>Лоханка:</label><div class="ms-container" id="rk_pel" data-options="не розширена|розширена"></div></div>
+                <div class="field small"><label>Лох. (мм):</label><input type="number" id="rk_pel_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Гіперех. включення:</label><div class="ms-container" id="rk_incl" data-options="відсутні|наявні|з акустичною тінню|без акустичної тіні"></div></div>
+                <div class="field small"><label>Включ. (мм):</label><input type="number" id="rk_incl_mm"></div>
+                <div class="field"><label>Сечовід:</label><div class="ms-container" id="rk_ur" data-options="не визначається|визначається"></div></div>
+                <div class="field small"><label>Сечовід (мм):</label><input type="number" id="rk_ur_mm"></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_lk" onchange="toggleSec('sec_lk')"> 7. Ліва нирка</label></h2>
+        <div class="section-box" id="sec_lk" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Стан:</label><div class="ms-container" id="lk_vis" data-single="true" data-options="візуалізована|не візуалізована|видалена"></div></div>
+                <div class="field"><label>Розміщення:</label><div class="ms-container" id="lk_loc" data-options="звичайне|опущена"></div></div>
+                <div class="field"><label>Рухливість:</label><div class="ms-container" id="lk_mob" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Форма:</label><div class="ms-container" id="lk_form" data-options="звичайна|не змінена|змінена"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Контури:</label><div class="ms-container" id="lk_cont" data-options="рівні|нерівні|чіткі|нечіткі"></div></div>
+                <div class="field"><label>Розміри:</label><div class="ms-container" id="lk_size_st" data-options="не збільшені|збільшені"></div></div>
+                <div class="field small"><label>Довжина (мм):</label><input type="number" id="lk_l"></div>
+                <div class="field small"><label>Ширина (мм):</label><input type="number" id="lk_w"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" id="lk_echo" data-options="звичайна|підвищена|знижена"></div></div>
+                <div class="field"><label>Структура:</label><div class="ms-container" id="lk_struct" data-options="однорідна|неоднорідна"></div></div>
+                <div class="field"><label>Товщ. паренхіми:</label><div class="ms-container" id="lk_par_st" data-options="не змінена|змінена"></div></div>
+                <div class="field small"><label>Паренхіма (мм):</label><input type="number" id="lk_par_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Кортико-медулярна диференціація:</label><div class="ms-container" id="lk_cmd" data-options="не змінена|змінена"></div></div>
+                <div class="field"><label>Центр. комплекс:</label><div class="ms-container" id="lk_ck" data-options="не змінений|змінений|ущільнений"></div></div>
+                <div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="lk_mass" data-options="не виявлені|виявлені"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Чашечки:</label><div class="ms-container" id="lk_cal" data-options="не розширені|розширені"></div></div>
+                <div class="field small"><label>Чаш. (мм):</label><input type="number" id="lk_cal_mm"></div>
+                <div class="field"><label>Лоханка:</label><div class="ms-container" id="lk_pel" data-options="не розширена|розширена"></div></div>
+                <div class="field small"><label>Лох. (мм):</label><input type="number" id="lk_pel_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Гіперех. включення:</label><div class="ms-container" id="lk_incl" data-options="відсутні|наявні|з акустичною тінню|без акустичної тіні"></div></div>
+                <div class="field small"><label>Включ. (мм):</label><input type="number" id="lk_incl_mm"></div>
+                <div class="field"><label>Сечовід:</label><div class="ms-container" id="lk_ur" data-options="не визначається|визначається"></div></div>
+                <div class="field small"><label>Сечовід (мм):</label><input type="number" id="lk_ur_mm"></div>
+            </div>
+        </div>
+
+        <h2><label><input type="checkbox" id="chk_fluid" onchange="toggleSec('sec_fluid')"> 8. Вільна рідина в черевній порожнині</label></h2>
+        <div class="section-box" id="sec_fluid" style="display: none;">
+            <div class="row">
+                <div class="field"><label>Вільна рідина:</label><div class="ms-container" id="free_fluid" data-single="true" data-options="відсутня|наявна"></div></div>
+            </div>
+        </div>
+
+        <h2>9. Заключення</h2>
+        <div class="section-box">
+            <div class="row">
+                <div class="field">
+                    <label>ЗАКЛЮЧЕННЯ (УЗ-ознаки):</label>
+                    <div class="ms-container" id="abd_conclusion" data-options="Капілярна гемангіома печінки|Капілярні гемангіоми печінки|Цироз печінки|Синдром портальної гіпертензії|Кіста печінки|Кісти печінки|Поліп жовчного міхура|Поліпи жовчного міхура|Хр. калькульозний холецистит|Стеатогепатит|Стеатоз печінки|Жировий гепатоз|Хр. гепатит|Гепатомегалія|Гепатоспленомегалія|Хр. безкам'яний холецистит|Хр. панкреатит|Хр. кальцифікуючий панкреатит|Дифузні зміни печінки|Дифузні зміни підшлункової залози|Спленомегалія|Перегин жовчного міхура|Нефролітіаз|Мікронефролітіаз|Кісти обох нирок|Дифузні зміни нирок|Кісти правої нирки|Кіста правої нирки|Кісти лівої нирки|Кіста лівої нирки|Подвоєння правої нирки|Подвоєння лівої нирки|Подвоєння обох нирок|Правобічний нефроптоз|Лівобічний нефроптоз|Двобічний нефроптоз|Додаткова доля селезінки|Структурних змін на момент огляду не виявлено"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Свій текст заключення:</label>
+                    <textarea id="abd_custom_conc" rows="2" placeholder="Додаткові висновки..."></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Рекомендації:</label>
+                    <div class="ms-container" id="abd_recommendations" data-options="КТ ОЧП|КТ ОЧП з контрастуванням|МРТ ОЧП|МРТ ОЧП з контрастуванням|Консультація гастроентеролога|Консультація уролога"></div>
+                </div>
+            </div>
+        </div>
+
+        <button class="generate-btn" id="generate-btn-abd" onclick="generateAbdReport()">📝 ЗГЕНЕРУВАТИ ТА СКОПІЮВАТИ ТЕКСТ (ОЧП)</button>
+    </div>
+
+    
+
+    <div id="page-mammary" class="page">
+        <h1>ОПИС УЗД Молочних залоз</h1>
+        
+        <div class="section-box">
+            <div class="row">
+                <div class="field small">
+                    <label>День менструального циклу:</label>
+                    <input type="number" id="mam_cycle_day" placeholder="Напр. 7">
+                </div>
+                <div class="field">
+                    <label>Вікова відповідність:</label>
+                    <div class="ms-container" id="mam_age_match" data-single="true" data-options="відповідають віку|не відповідають віку"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2>1. Права молочна залоза</h2>
+        <div class="section-box" id="sec_mam_r">
+            <div class="row">
+                <div class="field"><label>Шкіра:</label><div class="ms-container" id="mam_r_skin" data-options="не змінена|потовщена|втягнення|набряк"></div></div>
+                <div class="field"><label>Структура залози:</label><div class="ms-container" id="mam_r_struct" data-single="true" data-options="переважно жирова|переважно залозиста|змішана"></div></div>
+                <div class="field small"><label>Товщ. залозистого шару (мм):</label><input type="number" id="mam_r_thick"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Центральні протоки:</label><div class="ms-container" id="mam_r_duct_c" data-options="не розширені|розширені|звивисті|не звивисті"></div></div>
+                <div class="field small"><label>Розширені до (мм):</label><input type="number" id="mam_r_duct_c_mm"></div>
+                <div class="field"><label>Периферичні протоки:</label><div class="ms-container" id="mam_r_duct_p" data-options="не розширені|розширені|звивисті|не звивисті"></div></div>
+                <div class="field small"><label>Розширені до (мм):</label><input type="number" id="mam_r_duct_p_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ознаки фіброзу:</label><div class="ms-container" id="mam_r_fibr" data-single="true" data-options="відсутні|помірні|значні"></div></div>
+                <div class="field"><label>Лімфатичні вузли:</label><div class="ms-container" id="mam_r_ln" data-single="true" data-options="не візуалізуються|не змінені|змінені"></div></div>
+            </div>
+            <div class="row"><div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="mam_r_mass_gen" data-single="true" data-options="не виявлені|виявлені:"></div></div></div>
+            <div class="dynamic-section" id="mam-r-masses">
+                <button class="add-btn" onclick="addDynamicItem('mam-r-masses', 'mam_mass')">+ Додати утворення (Права)</button>
+            </div>
+        </div>
+
+        <h2>2. Ліва молочна залоза</h2>
+        <div class="section-box" id="sec_mam_l">
+            <div class="row">
+                <div class="field"><label>Шкіра:</label><div class="ms-container" id="mam_l_skin" data-options="не змінена|потовщена|втягнення|набряк"></div></div>
+                <div class="field"><label>Структура залози:</label><div class="ms-container" id="mam_l_struct" data-single="true" data-options="переважно жирова|переважно залозиста|змішана"></div></div>
+                <div class="field small"><label>Товщ. залозистого шару (мм):</label><input type="number" id="mam_l_thick"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Центральні протоки:</label><div class="ms-container" id="mam_l_duct_c" data-options="не розширені|розширені|звивисті|не звивисті"></div></div>
+                <div class="field small"><label>Розширені до (мм):</label><input type="number" id="mam_l_duct_c_mm"></div>
+                <div class="field"><label>Периферичні протоки:</label><div class="ms-container" id="mam_l_duct_p" data-options="не розширені|розширені|звивисті|не звивисті"></div></div>
+                <div class="field small"><label>Розширені до (мм):</label><input type="number" id="mam_l_duct_p_mm"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ознаки фіброзу:</label><div class="ms-container" id="mam_l_fibr" data-single="true" data-options="відсутні|помірні|значні"></div></div>
+                <div class="field"><label>Лімфатичні вузли:</label><div class="ms-container" id="mam_l_ln" data-single="true" data-options="не візуалізуються|не змінені|змінені"></div></div>
+            </div>
+            <div class="row"><div class="field"><label>Додаткові утворення:</label><div class="ms-container" id="mam_l_mass_gen" data-single="true" data-options="не виявлені|виявлені:"></div></div></div>
+            <div class="dynamic-section" id="mam-l-masses">
+                <button class="add-btn" onclick="addDynamicItem('mam-l-masses', 'mam_mass')">+ Додати утворення (Ліва)</button>
+            </div>
+        </div>
+
+        <h2>3. Заключення та Рекомендації</h2>
+        <div class="section-box">
+            <div class="row">
+                <div class="field">
+                    <label>ЗАКЛЮЧЕННЯ (можна декілька):</label>
+                    <div class="ms-container" id="mam_conclusion" data-options="Фіброзно-жирова інволюція молочних залоз|Дифузний фіброаденоматоз молочних залоз з явищами помірного аденозу|Дифузний фіброаденоматоз молочних залоз з явищами вираженого аденозу|Вогнищеве утворення правої молочної залози|Вогнищеве утворення лівої молочної залози|Фіброаденома правої молочної залози|Фіброаденома лівої молочної залози|Фіброаденоми правої молочної залози|Фіброаденоми лівої молочної залози|Фіброаденоми обох молочних залоз|Фіброзно-кістозна гіперплазія|Фіброзно-кістозні зміни молочних залоз|Кіста правої молочної залози|Кіста лівої молочної залози|Кісти обох молочних залоз|Дуктетазія обох молочних залоз|Дуктетазія правої молочної залози|Дуктетазія лівої молочної залози|Патологічних змін на момент огляду не виявлено"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field small">
+    <label>BI-RADS (Загальний):</label>
+    <div class="ms-container" id="mam_birads_global" data-single="false" data-options="1|2|3|4|5|6"></div>
+</div>
+                <div class="field"><label>Рекомендації:</label><div class="ms-container" id="mam_recommendations" data-options="консультація мамолога|консультація онколога|консультація хірурга|консультація ендокринолога"></div></div>
+            </div>
+        </div>
+
+        <button class="generate-btn" id="generate-btn-mam" onclick="generateMammaryReport()">📝 ЗГЕНЕРУВАТИ ТА СКОПІЮВАТИ ТЕКСТ (МЗ)</button>
+    </div>
+
+</div>
+
+<script>
+    // --- НАВІГАЦІЯ ---
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('page-' + pageId).classList.add('active');
+        const activeNavBtn = document.getElementById('nav-' + pageId);
+        if(activeNavBtn) activeNavBtn.classList.add('active');
+    }
+
+    // --- МУЛЬТИСЕЛЕКТИ ---
+    function initMultiSelects(container) {
+        container.querySelectorAll('.ms-container').forEach(el => {
+            if (el.dataset.initialized) return;
+            el.dataset.initialized = "true";
+            
+            let optionsStr = el.getAttribute('data-options');
+            if(!optionsStr) return; 
+            let options = optionsStr.split('|');
+            let isSingle = el.getAttribute('data-single') === "true";
+            
+            let btn = document.createElement('div');
+            btn.className = 'ms-btn';
+            btn.innerHTML = '<span>Обрати...</span> <span>▼</span>';
+            
+            let dropdown = document.createElement('div');
+            dropdown.className = 'ms-dropdown';
+            
+            let customInputDiv = document.createElement('div');
+            customInputDiv.className = 'ms-custom-input';
+            customInputDiv.innerHTML = '<input type="text" placeholder="+ Свій варіант (Enter)">';
+            dropdown.appendChild(customInputDiv);
+
+            options.forEach(opt => {
+                if(!opt) return;
+                let lbl = document.createElement('label');
+                lbl.className = 'ms-option';
+                lbl.innerHTML = `<input type="${isSingle ? 'radio' : 'checkbox'}" name="${el.id || Math.random()}" value="${opt}"> <span>${opt}</span>`;
+                dropdown.appendChild(lbl);
+            });
+
+            el.appendChild(btn);
+            el.appendChild(dropdown);
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.ms-dropdown').forEach(d => { if(d !== dropdown) d.classList.remove('active'); });
+                dropdown.classList.toggle('active');
+            });
+
+            dropdown.addEventListener('click', (e) => { e.stopPropagation(); });
+            dropdown.addEventListener('change', () => { updateBtnText(el, btn); });
+
+            let inputField = customInputDiv.querySelector('input');
+            inputField.addEventListener('keydown', function(e) {
+                if(e.key === 'Enter' && this.value.trim() !== '') {
+                    e.preventDefault();
+                    let lbl = document.createElement('label');
+                    lbl.className = 'ms-option';
+                    lbl.innerHTML = `<input type="${isSingle ? 'radio' : 'checkbox'}" name="${el.id || Math.random()}" value="${this.value.trim()}" checked> <span>${this.value.trim()}</span>`;
+                    dropdown.insertBefore(lbl, dropdown.children[1]);
+                    this.value = '';
+                    updateBtnText(el, btn);
+                }
+            });
+        });
+    }
+
+    function updateBtnText(container, btn) {
+        let checked = container.querySelectorAll('input:checked');
+        let vals = Array.from(checked).map(cb => cb.value);
+        btn.querySelector('span').innerText = vals.length > 0 ? vals.join(', ') : 'Обрати...';
+    }
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.ms-dropdown').forEach(d => d.classList.remove('active'));
+    });
+
+    document.addEventListener("DOMContentLoaded", () => { initMultiSelects(document); });
+
+    // --- ДОПОМІЖНІ ФУНКЦІЇ ---
+    function getMsValue(containerId) {
+        let container = document.getElementById(containerId);
+        if(!container) return "";
+        let checked = container.querySelectorAll('input:checked');
+        return Array.from(checked).map(cb => cb.value).join(', ');
+    }
+    
+    function getMsValFromEl(el) {
+        let checked = el.querySelectorAll('input:checked');
+        return Array.from(checked).map(cb => cb.value).join(', ');
+    }
+
+    function formatSize(val) {
+        if (!val || val.trim() === "") return "___ см";
+        if (val.toLowerCase().includes("см") || val.toLowerCase().includes("cm")) return val;
+        return val + " см";
+    }
+
+    function formatMM(val) {
+        if (!val || val.toString().trim() === "") return "___ мм";
+        return val + " мм";
+    }
+
+    // --- КОПІЮВАННЯ HTML У БУФЕР (НАДІЙНИЙ МЕТОД) ---
+    function copyToClipboard(htmlContent, btnId, defaultText) {
+        let tempDiv = document.createElement("div");
+        tempDiv.style.position = "absolute";
+        tempDiv.style.left = "-9999px";
+        tempDiv.style.top = "-9999px";
+        tempDiv.setAttribute("contenteditable", "true");
+        tempDiv.innerHTML = htmlContent;
+        document.body.appendChild(tempDiv);
+
+        let range = document.createRange();
+        range.selectNodeContents(tempDiv);
+        let selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        tempDiv.focus();
+
+        try {
+            document.execCommand('copy');
+            let btn = document.getElementById(btnId);
+            btn.innerHTML = "✅ СКОПІЙОВАНО! Вставляйте у МІС";
+            btn.style.backgroundColor = "#2ecc71";
+            setTimeout(() => {
+                btn.innerHTML = defaultText;
+                btn.style.backgroundColor = "#27ae60";
+            }, 3000);
+        } catch (err) {
+            alert("Помилка при копіюванні: " + err);
+        }
+
+        selection.removeAllRanges();
+        document.body.removeChild(tempDiv);
+    }
+
+    // =======================================================
+    // ГЕНЕРАТОР: ЩИТОПОДІБНА ЗАЛОЗА
+    // =======================================================
+    
+    // Калькулятор об'єму для ЩЗ
+    function calcVol() {
+        let k = parseFloat(document.getElementById('calc_method').value);
+        let rl = parseFloat(document.getElementById('r_l').value) || 0;
+        let rt = parseFloat(document.getElementById('r_t').value) || 0;
+        let rw = parseFloat(document.getElementById('r_w').value) || 0;
+        if(rl && rt && rw) document.getElementById('r_v').value = (rl * rt * rw * k).toFixed(1);
+
+        let ll = parseFloat(document.getElementById('l_l').value) || 0;
+        let lt = parseFloat(document.getElementById('l_t').value) || 0;
+        let lw = parseFloat(document.getElementById('l_w').value) || 0;
+        if(ll && lt && lw) document.getElementById('l_v').value = (ll * lt * lw * k).toFixed(1);
+    }
+
+    const templatesThyroid = {
+        'nodule': `
+            <div class="row">
+                <div class="field"><label>Локалізація:</label><div class="ms-container" data-options="у перешийку у верхньому сегменті|у перешийку у середньому сегменті|у перешийку у нижньому сегменті|у перешийку у всіх сегментах|у правій частці у верхньому сегменті|у правій частці у середньому сегменті|у правій частці у нижньому сегменті|у правій частці у всіх сегментах|у лівій частці у верхньому сегменті|у лівій частці у середньому сегменті|у лівій частці у нижньому сегменті|у лівій частці у всіх сегментах|в обох частках у верхньому сегменті|в обох частках у середньому сегменті|в обох частках у нижньому сегменті|в обох частках у всіх сегментах|у перешийку|у правій частці|у лівій частці|в обох частках"></div></div>
+                <div class="field small"><label>Форма:</label><div class="ms-container" data-options="округла|овальна|неправильної форми|овальна з вертикальною орієнтацією"></div></div>
+                <div class="field small"><label>Розміри:</label><input type="text" class="n_size" placeholder="___х___"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" data-options="анехогенне|анехогенні|ізоехогенне|ізоехогенні|гіпоехогенне|гіпоехогенні|гіперехогенне|гіперехогенні|гіперехогенне з акустичною тінню|гіперехогенні з акустичною тінню|змішаної ехогенності"></div></div>
+                <div class="field"><label>Структура:</label><div class="ms-container" data-options="неоднорідна|однорідна|неоднорідна з дрібними гіперехогенними включеннями|неоднорідна з крупними гіперехогенними включеннями|неоднорідна з дрібними та крупними гіперехогенними включеннями|неоднорідна з анехогенними ділянками|неоднорідна з крупною анехогенною ділянкою|неоднорідна з ізоехогенним пристінковим компонентом|неоднорідна з крупним гіперехогенним включенням|неоднорідна з крупним гіперехогенним включенням з ехотінню|неоднорідна з крупними гіперехогенними включеннями з ехотінню|губчата|неоднорідна з дрібними гіперехогенними включеннями без ехотіні (мікрокальцинати)|неоднорідна з крупними анехогенними ділянками|з дрібними гіперехогенними включеннями з артефактом по типу «хвоста комети»|з дрібним гіперехогенним включенням з артефактом по типу «хвоста комети»"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Контури:</label><div class="ms-container" data-options="рівні|нерівні|чіткі|нечіткі|помірно нерівні|помірно нечіткі|гідрофільні|кальцинована капсула"></div></div>
+                <div class="field"><label>Кровоплин (КДК):</label><div class="ms-container" data-options="не візуалізується|інтранодулярний|перинодулярний|змішаний"></div></div>
+                <div class="field small"><label>EU-TIRADS:</label><div class="ms-container" data-options="1|2|3|4|5"></div></div>
+            </div>`,
+        'lymph': `
+            <div class="row">
+                <div class="field"><label>Локалізація:</label><div class="ms-container" data-options="Вздовж лівого судинного пучка шиї|Вздовж правого судинного пучка шиї|у верхній третині шиї|у середній третині шиї|у нижній третині шиї|Біля передньої поверхні внутрішньої яремної вени з лівого боку шиї|з правого боку шиї|Біля задньої поверхні внутрішньої яремної вени|Біля латеральної поверхні внутрішньої яремної вени|Біля медіальної поверхні внутрішньої яремної вени|Біля передної поверхні сонної артерії|Біля задньої поверхні сонної артерії|Біля латеральої поверхні сонної артерії|Біля медіальної поверхні сонної артерії|Біля переднього краю кивального м’язу|Біля заднього краю кивального м’язу|В лівій підщелепній області|В правій підщелепній області|В ділянці післяопераційного рубця|Претрахеально|Паратрахеально з лівого боку|Паратрахеально з правого боку|Паратрахеально з обох боків|Біля нижнього полюсу правої частки щитоподібної залози|Біля нижнього полюсу лівої частки щитоподібної залози|В лівій надключичній ділянці|В правій надключичній ділянці|В підщелепних ділянках з обох боків|Шийні лімфатичні вузли з обох боків"></div></div>
+                <div class="field small"><label>Кількість:</label><div class="ms-container" data-options="No 1|No 2|No 3|No 4|No 5|поодинокі|множинні"></div></div>
+                <div class="field small"><label>Форма:</label><div class="ms-container" data-options="округла|овальна|неправильна"></div></div>
+                <div class="field small"><label>Розміри:</label><input type="text" class="l_size" placeholder="___"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Структура:</label><div class="ms-container" data-options="змінена|не змінена"></div></div>
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" data-options="звичайна|середня|знижена|підвищена"></div></div>
+                <div class="field"><label>Контури:</label><div class="ms-container" data-options="рівні|нерівні"></div></div>
+            </div>`,
+        'parathyroid': `
+            <div class="row">
+                <div class="field"><label>Локалізація:</label><div class="ms-container" data-options="нижня|верхня|ліва|права"></div></div>
+                <div class="field"><label>Стан:</label><div class="ms-container" data-options="змінені|не змінені"></div></div>
+                <div class="field"><label>Розмір:</label><input type="text" class="p_size" placeholder="___"></div>
+            </div>`,
+        'neckmass': `
+            <div class="row">
+                <div class="field"><label>Локалізація:</label><div class="ms-container" data-options="в ділянці під’язикової кісткі|в ділянці правої підщелепної слинної залози|в ділянці лівої підщелепної слинної залози|в ділянці правої привушної слинної залози|в ділянці лівої привушної слинної залози|біля нижнього полюсу правої частки щитоподібної залози|біля нижнього полюсу лівої частки щитоподібної залози|біля задньої поверхні лівої частки щитоподібної залози|біля задньої поверхні правої частки щитоподібної залози|в лівій підщелепній ділянці|в правій підщелепній ділянці|в лівій надключичній ділянці|в правій надключичній ділянці|претрахеально|у правій підщелепній слинній залозі|у лівій підщелепній слинній залозі|у правій привушній слинній залозі|у лівій привушній слинній залозі|паратрахеально: зліва|паратрахеально: справа|біля переднього краю кивального м’язу з лівого боку шиї|біля переднього краю кивального м’язу з правого боку шиї|у верхній третині шиї|у середній третині шиї|у нижній третині шиї|біля заднього краю кивального м’язу з лівого боку шиї|біля заднього краю кивального м’язу з правого боку шиї|в ділянці після операційного рубця"></div></div>
+                <div class="field small"><label>Форма:</label><div class="ms-container" data-options="округла|овальна|неправильна"></div></div>
+                <div class="field small"><label>Розміри:</label><input type="text" class="m_size" placeholder="___"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" data-options="анехогенне|ізоехогенне|гіпоехогенне|гіперехогенне|змішаної ехогенності|підвищеної ехогенності"></div></div>
+                <div class="field"><label>Структура:</label><div class="ms-container" data-options="однорідна|неоднорідна"></div></div>
+                <div class="field"><label>Контури:</label><div class="ms-container" data-options="рівні|нерівні"></div></div>
+            </div>`,
+            'neckmass': `...твій старий код...`,
+        // ДОДАТИ ОСЬ ЦЕЙ БЛОК:
+        'mam_mass': `
+            <div class="row">
+                <div class="field"><label>Локалізація:</label><div class="ms-container" data-options="у верхньо-зовнішньому квадранті|у верхньо-внутрішньому квадранті|у нижньо-зовнішньому квадранті|у нижньо-внутрішньому квадранті|на 12 годин|на 1 годину|на 2 години|на 3 години|на 4 години|на 5 годин|на 6 годин|на 7 годин|на 8 годин|на 9 годин|на 10 годин|на 11 годин"></div></div>
+                <div class="field small"><label>Кількість:</label><input type="text" class="m_qty" placeholder="___"></div>
+                <div class="field small"><label>Форма:</label><div class="ms-container" data-options="округла|овальна|неправильна"></div></div>
+                <div class="field small"><label>Розміри:</label><input type="text" class="m_size" placeholder="___х___"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label>Ехогенність:</label><div class="ms-container" data-options="анехогенне|анехогенні|гіпоехогенне|гіпоехогенні|ізоехогенне|ізоехогенні|гіперехогенне|гіперехогенні"></div></div>
+                <div class="field"><label>Структура:</label><div class="ms-container" data-options="однорідна|неоднорідна"></div></div>
+                <div class="field"><label>Контури:</label><div class="ms-container" data-options="рівні|нерівні|чіткі|нечіткі"></div></div>
+                <div class="field"><label>КДК:</label><div class="ms-container" data-options="не візуалізується|інтранодулярний|перинодулярний|змішаний|помірний|виражений|незначний"></div></div>
+                <div class="field small"><label>BI-RADS (утв.):</label><div class="ms-container"  data-options="1|2|3|4|5|6"></div></div>
+            </div>`
+    };
+
+    function addDynamicItem(containerId, type) {
+        let div = document.createElement('div');
+        div.className = 'dynamic-item ' + type + '-item';
+        div.innerHTML = `<button class="remove-btn" onclick="this.parentElement.remove()">❌ Видалити</button>` + templatesThyroid[type];
+        let container = document.getElementById(containerId);
+        container.insertBefore(div, container.lastElementChild);
+        initMultiSelects(div);
+    }
+    // Допоміжна функція для показу/приховування блоків
+    function toggleSec(id) {
+        let el = document.getElementById(id);
+        if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // =======================================================
+    // ГЕНЕРАТОР: ОРГАНИ ЧЕРЕВНОЇ ПОРОЖНИНИ (ТІЛЬКИ ЗАПОВНЕНЕ)
+    // =======================================================
+    function generateAbdReport() {
+        let h = `<div style="font-size: 14pt; color: #000000; font-family: Arial, sans-serif; line-height: 1.5;">`;
+            h += `<p><strong>Область дослідження:</strong> Органи черевної порожнини</p>`;
+
+        // 1. ПЕЧІНКА
+        if (document.getElementById('chk_liv').checked) {
+            let p = [];
+            let loc = getMsValue('liv_loc'); if(loc) p.push("розміщення: " + loc);
+            let form = getMsValue('liv_form'); if(form) p.push("форма: " + form);
+            
+            let sizeSt = getMsValue('liv_size_state');
+            let dims = [];
+            if(document.getElementById('liv_kvr').value) dims.push("КВР - " + formatMM(document.getElementById('liv_kvr').value));
+            if(document.getElementById('liv_pzr').value) dims.push("ПЗР - " + formatMM(document.getElementById('liv_pzr').value));
+            if(document.getElementById('liv_l_th').value) dims.push("ліва частка: товщ. - " + formatMM(document.getElementById('liv_l_th').value));
+            if(sizeSt || dims.length) p.push("розміри: " + (sizeSt ? sizeSt : "") + (dims.length ? (sizeSt ? " (" : "(") + dims.join(', ') + ")" : "").trim());
+
+            let cont = getMsValue('liv_cont'); if(cont) p.push("контури: " + cont);
+            let struct = getMsValue('liv_struct'); if(struct) p.push("структура: " + struct);
+            let echo = getMsValue('liv_echo'); if(echo) p.push("ехогенність: " + echo);
+            let att = getMsValue('liv_att'); if(att) p.push("затухання УЗ: " + att);
+            let vasc = getMsValue('liv_vasc'); if(vasc) p.push("судинна архітектоніка: " + vasc);
+            let ducts = getMsValue('liv_ducts'); if(ducts) p.push("внутр. жовчні протоки: " + ducts);
+            let mass = getMsValue('liv_mass'); if(mass) p.push("додаткові утворення: " + mass);
+
+            let pvSt = getMsValue('liv_pv_st'); let pvMm = document.getElementById('liv_pv_mm').value;
+            if(pvSt || pvMm) p.push("портальна вена: " + ((pvMm ? formatMM(pvMm) + ", " : "") + (pvSt ? pvSt : "")).trim());
+            let ivc = getMsValue('liv_ivc'); if(ivc) p.push("нижня порожниста вена: " + ivc);
+            let hv = getMsValue('liv_hv'); if(hv) p.push("печінкові вени: " + hv);
+
+            if(p.length) h += `<p><strong>Печінка:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 2. ЖОВЧНИЙ МІХУР
+        if (document.getElementById('chk_gb').checked) {
+            let p = [];
+            let state = getMsValue('gb_state'); if(state) p.push(state);
+            let loc = getMsValue('gb_loc'); if(loc) p.push("розміщення: " + loc);
+            let form = getMsValue('gb_form'); if(form) p.push("форма: " + form);
+            
+            let sizeSt = getMsValue('gb_size_st');
+            let l = document.getElementById('gb_l').value; let w = document.getElementById('gb_w').value;
+            if(sizeSt || l || w) p.push("розміри: " + ((l && w ? `${l} x ${formatMM(w)}, ` : "") + (sizeSt ? sizeSt : "")).trim());
+
+            let walls = getMsValue('gb_walls'); let wallMm = document.getElementById('gb_wall_mm').value;
+            if(walls || wallMm) p.push("стінки: " + ((walls ? walls : "") + (wallMm ? " до " + formatMM(wallMm) : "")).trim());
+            let lumen = getMsValue('gb_lumen'); if(lumen) p.push("в просвіті: " + lumen);
+            let mass = getMsValue('gb_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            
+            let incl = getMsValue('gb_incl'); let inclMm = document.getElementById('gb_incl_mm').value; let inclProp = getMsValue('gb_incl_prop');
+            if(incl || inclMm || inclProp) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? ", " + formatMM(inclMm) : "") + (inclProp ? ", " + inclProp : "")).trim());
+
+            if(p.length) h += `<p><strong>Жовчний міхур:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 3. ХОЛЕДОХ
+        if (document.getElementById('chk_cd').checked) {
+            let p = [];
+            let state = getMsValue('cd_state'); if(state) p.push(state);
+            let exp = getMsValue('cd_exp'); let mm = document.getElementById('cd_mm').value;
+            if(exp || mm) p.push("розширення: " + ((exp ? exp : "") + (mm ? " " + formatMM(mm) : "")).trim());
+            let lumen = getMsValue('cd_lumen'); if(lumen) p.push("видимий просвіт: " + lumen);
+            
+            if(p.length) h += `<p><strong>Холедох:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 4. ПІДШЛУНКОВА ЗАЛОЗА
+        if (document.getElementById('chk_pan').checked) {
+            let p = [];
+            let vis = getMsValue('pan_vis'); if(vis) p.push(vis);
+            let form = getMsValue('pan_form'); if(form) p.push("форма: " + form);
+            
+            let sizeSt = getMsValue('pan_size_st');
+            let ph = document.getElementById('pan_head').value; let pb = document.getElementById('pan_body').value; let pt = document.getElementById('pan_tail').value;
+            if(sizeSt || ph || pb || pt) {
+                let sStr = "розміри: " + (sizeSt ? sizeSt : "");
+                let dims = [];
+                if(ph) dims.push("головка " + formatMM(ph));
+                if(pb) dims.push("тіло " + formatMM(pb));
+                if(pt) dims.push("хвіст " + formatMM(pt));
+                if(dims.length) sStr += (sizeSt ? ", " : "") + dims.join(', ');
+                p.push(sStr.trim());
+            }
+
+            let cont = getMsValue('pan_cont'); if(cont) p.push("контури: " + cont);
+            let par = getMsValue('pan_par'); if(par) p.push("паренхіма: " + par);
+            let echo = getMsValue('pan_echo'); if(echo) p.push("ехогенність: " + echo);
+            let mass = getMsValue('pan_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            
+            let duct = getMsValue('pan_duct'); let ductMm = document.getElementById('pan_duct_mm').value;
+            if(duct || ductMm) p.push("панкреатична протока: " + ((duct ? duct : "") + (ductMm ? ", " + formatMM(ductMm) : "")).trim());
+
+            if(p.length) h += `<p><strong>Підшлункова залоза:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 5. СЕЛЕЗІНКА
+        if (document.getElementById('chk_spl').checked) {
+            let p = [];
+            let vis = getMsValue('spl_vis'); if(vis) p.push(vis);
+            let form = getMsValue('spl_form'); if(form) p.push("форма: " + form);
+            
+            let sizeSt = getMsValue('spl_size_st');
+            let sl = document.getElementById('spl_l').value; let st = document.getElementById('spl_t').value;
+            if(sizeSt || sl || st) {
+                let sStr = "розміри: " + (sizeSt ? sizeSt : "");
+                let dims = [];
+                if(sl) dims.push("довжина " + formatMM(sl));
+                if(st) dims.push("товщина " + formatMM(st));
+                if(dims.length) sStr += (sizeSt ? ", " : "") + dims.join(', ');
+                p.push(sStr.trim());
+            }
+
+            let cont = getMsValue('spl_cont'); if(cont) p.push("контури: " + cont);
+            let struct = getMsValue('spl_struct'); if(struct) p.push("структура: " + struct);
+            let echo = getMsValue('spl_echo'); if(echo) p.push("ехогенність: " + echo);
+            let mass = getMsValue('spl_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            
+            let vein = getMsValue('spl_vein'); let veinMm = document.getElementById('spl_vein_mm').value;
+            if(vein || veinMm) p.push("селезінкова вена: " + ((vein ? vein : "") + (veinMm ? " " + formatMM(veinMm) : "")).trim());
+
+            if(p.length) h += `<p><strong>Селезінка:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 6. ПРАВА НИРКА
+        if (document.getElementById('chk_rk').checked) {
+            let p = [];
+            let vis = getMsValue('rk_vis'); if(vis) p.push(vis);
+            let loc = getMsValue('rk_loc'); if(loc) p.push("розміщення: " + loc);
+            let mob = getMsValue('rk_mob'); if(mob) p.push("рухливість: " + mob);
+            let form = getMsValue('rk_form'); if(form) p.push("форма: " + form);
+            let cont = getMsValue('rk_cont'); if(cont) p.push("контури: " + cont);
+            
+            let sizeSt = getMsValue('rk_size_st');
+            let rkl = document.getElementById('rk_l').value; let rkw = document.getElementById('rk_w').value;
+            if(sizeSt || rkl || rkw) {
+                let sStr = "розміри: " + (sizeSt ? sizeSt : "");
+                let dims = [];
+                if(rkl) dims.push("довжина " + formatMM(rkl));
+                if(rkw) dims.push("ширина " + formatMM(rkw));
+                if(dims.length) sStr += (sizeSt ? ", " : "") + dims.join(', ');
+                p.push(sStr.trim());
+            }
+
+            let echo = getMsValue('rk_echo'); if(echo) p.push("ехогенність: " + echo);
+            let struct = getMsValue('rk_struct'); if(struct) p.push("структура: " + struct);
+            
+            let parSt = getMsValue('rk_par_st'); let parMm = document.getElementById('rk_par_mm').value;
+            if(parSt || parMm) p.push("товщ. паренхіми: " + ((parSt ? parSt : "") + (parMm ? " " + formatMM(parMm) : "")).trim());
+
+            let cmd = getMsValue('rk_cmd'); if(cmd) p.push("КМД: " + cmd);
+            let ck = getMsValue('rk_ck'); if(ck) p.push("центральний комплекс: " + ck);
+            let mass = getMsValue('rk_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            
+            let cal = getMsValue('rk_cal'); let calMm = document.getElementById('rk_cal_mm').value;
+            if(cal || calMm) p.push("чашечки: " + ((cal ? cal : "") + (calMm ? " " + formatMM(calMm) : "")).trim());
+            let pel = getMsValue('rk_pel'); let pelMm = document.getElementById('rk_pel_mm').value;
+            if(pel || pelMm) p.push("лоханка: " + ((pel ? pel : "") + (pelMm ? " " + formatMM(pelMm) : "")).trim());
+            let incl = getMsValue('rk_incl'); let inclMm = document.getElementById('rk_incl_mm').value;
+            if(incl || inclMm) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? " " + formatMM(inclMm) : "")).trim());
+            let ur = getMsValue('rk_ur'); let urMm = document.getElementById('rk_ur_mm').value;
+            if(ur || urMm) p.push("сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
+
+            if(p.length) h += `<p><strong>Права нирка:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 7. ЛІВА НИРКА
+        if (document.getElementById('chk_lk').checked) {
+            let p = [];
+            let vis = getMsValue('lk_vis'); if(vis) p.push(vis);
+            let loc = getMsValue('lk_loc'); if(loc) p.push("розміщення: " + loc);
+            let mob = getMsValue('lk_mob'); if(mob) p.push("рухливість: " + mob);
+            let form = getMsValue('lk_form'); if(form) p.push("форма: " + form);
+            let cont = getMsValue('lk_cont'); if(cont) p.push("контури: " + cont);
+            
+            let sizeSt = getMsValue('lk_size_st');
+            let lkl = document.getElementById('lk_l').value; let lkw = document.getElementById('lk_w').value;
+            if(sizeSt || lkl || lkw) {
+                let sStr = "розміри: " + (sizeSt ? sizeSt : "");
+                let dims = [];
+                if(lkl) dims.push("довжина " + formatMM(lkl));
+                if(lkw) dims.push("ширина " + formatMM(lkw));
+                if(dims.length) sStr += (sizeSt ? ", " : "") + dims.join(', ');
+                p.push(sStr.trim());
+            }
+
+            let echo = getMsValue('lk_echo'); if(echo) p.push("ехогенність: " + echo);
+            let struct = getMsValue('lk_struct'); if(struct) p.push("структура: " + struct);
+            
+            let parSt = getMsValue('lk_par_st'); let parMm = document.getElementById('lk_par_mm').value;
+            if(parSt || parMm) p.push("товщ. паренхіми: " + ((parSt ? parSt : "") + (parMm ? " " + formatMM(parMm) : "")).trim());
+
+            let cmd = getMsValue('lk_cmd'); if(cmd) p.push("КМД: " + cmd);
+            let ck = getMsValue('lk_ck'); if(ck) p.push("центральний комплекс: " + ck);
+            let mass = getMsValue('lk_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            
+            let cal = getMsValue('lk_cal'); let calMm = document.getElementById('lk_cal_mm').value;
+            if(cal || calMm) p.push("чашечки: " + ((cal ? cal : "") + (calMm ? " " + formatMM(calMm) : "")).trim());
+            let pel = getMsValue('lk_pel'); let pelMm = document.getElementById('lk_pel_mm').value;
+            if(pel || pelMm) p.push("лоханка: " + ((pel ? pel : "") + (pelMm ? " " + formatMM(pelMm) : "")).trim());
+            let incl = getMsValue('lk_incl'); let inclMm = document.getElementById('lk_incl_mm').value;
+            if(incl || inclMm) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? " " + formatMM(inclMm) : "")).trim());
+            let ur = getMsValue('lk_ur'); let urMm = document.getElementById('lk_ur_mm').value;
+            if(ur || urMm) p.push("сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
+
+            if(p.length) h += `<p><strong>Ліва нирка:</strong> ${p.join('. ')}.</p>`;
+        }
+
+        // 8. ВІЛЬНА РІДИНА
+        if (document.getElementById('chk_fluid').checked) {
+            let fluid = getMsValue('free_fluid');
+            if(fluid) h += `<p><strong>Вільна рідина в черевній порожнині:</strong> ${fluid}.</p>`;
+        }
+
+        // 9. ЗАКЛЮЧЕННЯ (Завжди показуємо, якщо є дані)
+        let signs = getMsValue('abd_conclusion');
+        let customC = document.getElementById('abd_custom_conc').value;
+        if(signs || customC) {
+            h += `<p><strong>ЗАКЛЮЧЕННЯ:</strong><br>`;
+            if(signs) h += `${signs.replace(/, /g, '. ')}.<br>`;
+            if(customC) h += `${customC}<br>`;
+            h += `</p>`;
+        }
+        
+        let recom = getMsValue('abd_recommendations');
+        if(recom) h += `<p><strong>Рекомендації:</strong><br>${recom.replace(/, /g, '<br>')}</p>`;
+
+        h += `</div>`;
+
+        copyToClipboard(h, 'generate-btn-abd', '📝 ЗГЕНЕРУВАТИ ТА СКОПІЮВАТИ ТЕКСТ (ОЧП)');
+    }
+
+    function generateThyroidReport() {
+        let methodSelect = document.getElementById('calc_method');
+        let method = methodSelect.options[methodSelect.selectedIndex].text.includes("Brunn") ? "Brunn" : "Mikі";
+
+        let h = `<div style="font-size: 14pt; color: #000000; font-family: Arial, sans-serif; line-height: 1.5;">`;
+        
+        h += `<p><strong>Область дослідження:</strong> ${document.getElementById('p_region').value}</p>`;
+        h += `<p><strong>Візуалізується:</strong> ${getMsValue('ms_visual') || "___"}</p>`;
+        h += `<p><strong>Розміщена:</strong> ${getMsValue('ms_location') || "___"}</p>`;
+        h += `<p><strong>Контур:</strong> ${getMsValue('ms_contour') || "___"}. `;
+        h += `<strong>Капсула:</strong> ${getMsValue('ms_capsule') || "___"}</p>`;
+        
+        h += `<p><strong>Об'єм:</strong></p>`;
+        let r_type = getMsValue('ms_r_type') || "права частка";
+        let rv = document.getElementById('r_v').value;
+        if(document.getElementById('r_l').value) {
+            h += `<p>Об'єм ${r_type} за методом ${method}: <strong>${rv} см³</strong> (довжина ${document.getElementById('r_l').value} см, товщина ${document.getElementById('r_t').value} см, ширина ${document.getElementById('r_w').value} см);</p>`;
+        }
+        let l_type = getMsValue('ms_l_type') || "ліва частка";
+        let lv = document.getElementById('l_v').value;
+        if(document.getElementById('l_l').value) {
+            h += `<p>Об'єм ${l_type} за методом ${method}: <strong>${lv} см³</strong> (довжина ${document.getElementById('l_l').value} см, товщина ${document.getElementById('l_t').value} см, ширина ${document.getElementById('l_w').value} см);</p>`;
+        }
+        
+        let isthmus_s = getMsValue('ms_isthmus_state') || "___";
+        let isthmus_c = document.getElementById('isthmus_cm').value ? document.getElementById('isthmus_cm').value + " см" : "";
+        h += `<p><strong>Перешийок:</strong> ${isthmus_s} ${isthmus_c}</p>`;
+        
+        h += `<p><strong>Ехогенність:</strong> ${getMsValue('ms_echo') || "___"}</p>`;
+        h += `<p><strong>Ехоструктура:</strong> ${getMsValue('ms_structure') || "___"}</p>`;
+
+        let nodGen = getMsValue('ms_n_general');
+        h += `<p><strong>Об'ємні утворення щ/з:</strong> ${nodGen}</p>`;
+        if(nodGen.includes("Виявлені")) {
+            let nodules = document.getElementById('page-thyroid').querySelectorAll('.nodule-item');
+            nodules.forEach(n => {
+                let msList = n.querySelectorAll('.ms-container');
+                h += `<p style="margin-left: 20px;">- ${getMsValFromEl(msList[0])}; форма: ${getMsValFromEl(msList[1])}; розміри: ${formatSize(n.querySelector('.n_size').value)}; ехогенність: ${getMsValFromEl(msList[2])}; структура: ${getMsValFromEl(msList[3])}; контури: ${getMsValFromEl(msList[4])}; кровоплин при КДК: ${getMsValFromEl(msList[5])}; EU-TIRADS: ${getMsValFromEl(msList[6])}.</p>`;
+            });
+        }
+
+        h += `<p><strong>Кровоплин щ/залози при КДК:</strong> ${getMsValue('ms_kdk') || "___"}</p>`;
+
+        h += `<p><strong>Лімфатичні вузли:</strong> ${getMsValue('ms_ln_general') || "___"}</p>`;
+        let lymphs = document.getElementById('page-thyroid').querySelectorAll('.lymph-item');
+        lymphs.forEach(l => {
+            let msList = l.querySelectorAll('.ms-container');
+            h += `<p style="margin-left: 20px;">- ${getMsValFromEl(msList[0])}; кількість: ${getMsValFromEl(msList[1])}; форма: ${getMsValFromEl(msList[2])}; розміри: ${formatSize(l.querySelector('.l_size').value)}; структура: ${getMsValFromEl(msList[3])}; ехогенність: ${getMsValFromEl(msList[4])}; контури: ${getMsValFromEl(msList[5])}.</p>`;
+        });
+
+        h += `<p><strong>Прищитоподібні залози:</strong> ${getMsValue('ms_pt_general') || "___"}</p>`;
+        let paras = document.getElementById('page-thyroid').querySelectorAll('.parathyroid-item');
+        paras.forEach(p => {
+            let msList = p.querySelectorAll('.ms-container');
+            h += `<p style="margin-left: 20px;">- Локалізація: ${getMsValFromEl(msList[0])}, стан: ${getMsValFromEl(msList[1])}, розміри: ${formatSize(p.querySelector('.p_size').value)}</p>`;
+        });
+
+        h += `<p><strong>Додаткові утворення шиї:</strong> ${getMsValue('ms_nm_general') || "___"}</p>`;
+        let masses = document.getElementById('page-thyroid').querySelectorAll('.neckmass-item');
+        masses.forEach(m => {
+            let msList = m.querySelectorAll('.ms-container');
+            h += `<p style="margin-left: 20px;">- Локалізація: ${getMsValFromEl(msList[0])}; форма: ${getMsValFromEl(msList[1])}; розміри: ${formatSize(m.querySelector('.m_size').value)}; ехогенність: ${getMsValFromEl(msList[2])}; структура: ${getMsValFromEl(msList[3])}; контури: ${getMsValFromEl(msList[4])}.</p>`;
+        });
+
+        h += `<p><strong>Заключення:</strong></p>`;
+        let signs = getMsValue('ms_c_signs');
+        if(signs) h += `<p>УЗ-ознаки: ${signs}</p>`;
+        
+        let tirads = getMsValue('ms_c_tirads');
+        if(tirads) h += `<p>EU-TIRADS: ${tirads}</p>`;
+        
+        let conc = document.getElementById('c_conclusion').value;
+        if(conc) h += `<p>Висновок: ${conc}</p>`;
+        
+        let recom = getMsValue('ms_c_recom');
+        if(recom) h += `<p>Рекомендовано:<br>${recom.replace(/, /g, '<br>')}</p>`;
+
+        h += `</div>`;
+
+        copyToClipboard(h, 'generate-btn-thyroid', '📝 ЗГЕНЕРУВАТИ ТА СКОПІЮВАТИ (ЩИТОПОДІБНА)');
+    }
+// =======================================================
+    // ПРИМУСОВЕ ОЧИЩЕННЯ ФОРМИ ПРИ ОБНОВЛЕННІ СТОРІНКИ
+    // =======================================================
+    function generateMammaryReport() {
+        let h = `<div style="font-size: 14pt; color: #000000; font-family: Arial, sans-serif; line-height: 1.5;">`;
+        h += `<p><strong>Область дослідження:</strong> Молочні залози</p>`;
+
+        let cycle = document.getElementById('mam_cycle_day').value;
+        if(cycle) h += `<p><strong>День менструального циклу:</strong> ${cycle}</p>`;
+
+        // Права молочна залоза
+        h += `<p><strong>Права молочна залоза:</strong></p><ul style="margin-top: 0;">`;
+        let rSkin = getMsValue('mam_r_skin'); if(rSkin) h += `<li>Шкіра: ${rSkin}.</li>`;
+        let rStruct = getMsValue('mam_r_struct'); if(rStruct) h += `<li>Структура: ${rStruct}.</li>`;
+        let rThick = document.getElementById('mam_r_thick').value; if(rThick) h += `<li>Товщина залозистого шару: ${formatMM(rThick)}.</li>`;
+        
+        let rDc = getMsValue('mam_r_duct_c'); let rDcMm = document.getElementById('mam_r_duct_c_mm').value;
+        if(rDc || rDcMm) h += `<li>Центральні протоки: ${rDc}${rDcMm ? ` до ${formatMM(rDcMm)}` : ''}.</li>`;
+        
+        let rDp = getMsValue('mam_r_duct_p'); let rDpMm = document.getElementById('mam_r_duct_p_mm').value;
+        if(rDp || rDpMm) h += `<li>Периферичні протоки: ${rDp}${rDpMm ? ` до ${formatMM(rDpMm)}` : ''}.</li>`;
+
+        let rFibr = getMsValue('mam_r_fibr'); if(rFibr) h += `<li>Ознаки фіброзу: ${rFibr}.</li>`;
+        let rLn = getMsValue('mam_r_ln'); if(rLn) h += `<li>Лімфатичні вузли: ${rLn}.</li>`;
+        
+        let rMassGen = getMsValue('mam_r_mass_gen'); h += `<li>Додаткові утворення: ${rMassGen || 'не виявлені'}.</li>`;
+        if(rMassGen && rMassGen.includes('виявлені')) {
+            let masses = document.getElementById('mam-r-masses').querySelectorAll('.mam_mass-item');
+            masses.forEach(m => {
+                let ms = m.querySelectorAll('.ms-container');
+                let qty = m.querySelector('.m_qty').value;
+                let size = m.querySelector('.m_size').value;
+                h += `<li style="list-style-type: circle; margin-left: 20px;">Локалізація: ${getMsValFromEl(ms[0])}; кількість: ${qty || '___'}; форма: ${getMsValFromEl(ms[2])}; розміри: ${formatSize(size)}; ехогенність: ${getMsValFromEl(ms[3])}; структура: ${getMsValFromEl(ms[4])}; контури: ${getMsValFromEl(ms[5])}; КДК: ${getMsValFromEl(ms[6])}; BI-RADS: ${getMsValFromEl(ms[7])}.</li>`;
+            });
+        }
+        h += `</ul>`;
+
+        // Ліва молочна залоза
+        h += `<p><strong>Ліва молочна залоза:</strong></p><ul style="margin-top: 0;">`;
+        let lSkin = getMsValue('mam_l_skin'); if(lSkin) h += `<li>Шкіра: ${lSkin}.</li>`;
+        let lStruct = getMsValue('mam_l_struct'); if(lStruct) h += `<li>Структура: ${lStruct}.</li>`;
+        let lThick = document.getElementById('mam_l_thick').value; if(lThick) h += `<li>Товщина залозистого шару: ${formatMM(lThick)}.</li>`;
+        
+        let lDc = getMsValue('mam_l_duct_c'); let lDcMm = document.getElementById('mam_l_duct_c_mm').value;
+        if(lDc || lDcMm) h += `<li>Центральні протоки: ${lDc}${lDcMm ? ` до ${formatMM(lDcMm)}` : ''}.</li>`;
+        
+        let lDp = getMsValue('mam_l_duct_p'); let lDpMm = document.getElementById('mam_l_duct_p_mm').value;
+        if(lDp || lDpMm) h += `<li>Периферичні протоки: ${lDp}${lDpMm ? ` до ${formatMM(lDpMm)}` : ''}.</li>`;
+
+        let lFibr = getMsValue('mam_l_fibr'); if(lFibr) h += `<li>Ознаки фіброзу: ${lFibr}.</li>`;
+        let lLn = getMsValue('mam_l_ln'); if(lLn) h += `<li>Лімфатичні вузли: ${lLn}.</li>`;
+        
+        let lMassGen = getMsValue('mam_l_mass_gen'); h += `<li>Додаткові утворення: ${lMassGen || 'не виявлені'}.</li>`;
+        if(lMassGen && lMassGen.includes('виявлені')) {
+            let masses = document.getElementById('mam-l-masses').querySelectorAll('.mam_mass-item');
+            masses.forEach(m => {
+                let ms = m.querySelectorAll('.ms-container');
+                let qty = m.querySelector('.m_qty').value;
+                let size = m.querySelector('.m_size').value;
+                h += `<li style="list-style-type: circle; margin-left: 20px;">Локалізація: ${getMsValFromEl(ms[0])}; кількість: ${qty || '___'}; форма: ${getMsValFromEl(ms[2])}; розміри: ${formatSize(size)}; ехогенність: ${getMsValFromEl(ms[3])}; структура: ${getMsValFromEl(ms[4])}; контури: ${getMsValFromEl(ms[5])}; КДК: ${getMsValFromEl(ms[6])}; BI-RADS: ${getMsValFromEl(ms[7])}.</li>`;
+            });
+        }
+        h += `</ul>`;
+
+        let ageMatch = getMsValue('mam_age_match');
+        if (ageMatch) h += `<p>${ageMatch === 'відповідають віку' ? 'Молочні залози відповідають віку.' : 'Молочні залози не відповідають віку.'}</p>`;
+
+        // Заключення
+        let conc = getMsValue('mam_conclusion');
+        let birads = getMsValue('mam_birads_global');
+        if(conc || birads) {
+            h += `<p><strong>ВИСНОВОК:</strong><br>`;
+            if (conc) h += `${conc.replace(/, /g, '.<br>')}.<br>`;
+            if (birads) h += `<strong>BI-RADS: ${birads}</strong>`;
+            h += `</p>`;
+        }
+
+        let recom = getMsValue('mam_recommendations');
+        if(recom) h += `<p><strong>Рекомендації:</strong><br>${recom.replace(/, /g, '<br>')}</p>`;
+
+        h += `</div>`;
+
+        copyToClipboard(h, 'generate-btn-mam', '📝 ЗГЕНЕРУВАТИ ТА СКОПІЮВАТИ ТЕКСТ (МЗ)');
+    }
+    window.addEventListener('pageshow', function() {
+        // 1. Очищаємо всі текстові, числові поля та textarea
+        document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
+            // Залишаємо дефолтне значення для області дослідження ЩЗ
+            if (input.id !== 'p_region') {
+                input.value = '';
+            } else {
+                input.value = 'Щитоподібна залоза';
+            }
+        });
+
+        // 2. Знімаємо всі чекбокси та радіокнопки
+        document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+            input.checked = false;
+        });
+
+        // 3. Скидаємо текст у кастомних мультиселектах на "Обрати..."
+        document.querySelectorAll('.ms-btn span:first-child').forEach(span => {
+            span.innerText = 'Обрати...';
+        });
+
+        // 4. Приховуємо всі динамічні блоки ОЧП
+        const abdSections = ['sec_liv', 'sec_gb', 'sec_cd', 'sec_pan', 'sec_spl', 'sec_rk', 'sec_lk', 'sec_fluid'];
+        abdSections.forEach(secId => {
+            const sec = document.getElementById(secId);
+            if (sec) sec.style.display = 'none';
+        });
+        
+        // 5. Повертаємо дефолтний метод розрахунку для ЩЗ
+        const calcMethod = document.getElementById('calc_method');
+        if (calcMethod) calcMethod.selectedIndex = 0;
+    });
+    
+</script>
+</body>
+</html>
