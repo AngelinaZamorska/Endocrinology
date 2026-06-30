@@ -301,7 +301,7 @@
         <h2><label><input type="checkbox" id="chk_pan" onchange="toggleSec('sec_pan')"> 4. Підшлункова залоза</label></h2>
         <div class="section-box" id="sec_pan" style="display: none;">
             <div class="row">
-                <div class="field"><label>Візуалізація:</label><div class="ms-container" id="pan_vis" data-single="true" data-options="на всьому протязі|візуалізується фрагментовано через метеоризм|не візуалізується|видалена"></div></div>
+                <div class="field"><label>Візуалізація:</label><div class="ms-container" id="pan_vis" data-single="true" data-options="візуалізується на всьому протязі|візуалізується фрагментовано через метеоризм|не візуалізується|видалена"></div></div>
                 <div class="field"><label>Форма:</label><div class="ms-container" id="pan_form" data-single="true" data-options="не змінена|змінена"></div></div>
                 <div class="field"><label>Розміри:</label><div class="ms-container" id="pan_size_st" data-single="true" data-options="не збільшені|збільшені"></div></div>
             </div>
@@ -782,28 +782,28 @@
         // 1. ПЕЧІНКА
         if (document.getElementById('chk_liv').checked) {
             let p = [];
-            let loc = getMsValue('liv_loc'); if(loc) p.push("розміщення: " + loc);
-            let form = getMsValue('liv_form'); if(form) p.push("форма: " + form);
+            let loc = getMsValue('liv_loc'); if(loc) p.push("Розміщення: " + loc);
+            let form = getMsValue('liv_form'); if(form) p.push("Форма: " + form);
             
             let sizeSt = getMsValue('liv_size_state');
             let dims = [];
             if(document.getElementById('liv_kvr').value) dims.push("КВР - " + formatMM(document.getElementById('liv_kvr').value));
             if(document.getElementById('liv_pzr').value) dims.push("ПЗР - " + formatMM(document.getElementById('liv_pzr').value));
             if(document.getElementById('liv_l_th').value) dims.push("ліва частка: товщ. - " + formatMM(document.getElementById('liv_l_th').value));
-            if(sizeSt || dims.length) p.push("розміри: " + (sizeSt ? sizeSt : "") + (dims.length ? (sizeSt ? " (" : "(") + dims.join(', ') + ")" : "").trim());
+            if(sizeSt || dims.length) p.push("Розміри: " + (sizeSt ? sizeSt : "") + (dims.length ? (sizeSt ? " (" : "(") + dims.join(', ') + ")" : "").trim());
 
-            let cont = getMsValue('liv_cont'); if(cont) p.push("контури: " + cont);
-            let struct = getMsValue('liv_struct'); if(struct) p.push("структура: " + struct);
-            let echo = getMsValue('liv_echo'); if(echo) p.push("ехогенність: " + echo);
-            let att = getMsValue('liv_att'); if(att) p.push("затухання УЗ: " + att);
-            let vasc = getMsValue('liv_vasc'); if(vasc) p.push("судинна архітектоніка: " + vasc);
-            let ducts = getMsValue('liv_ducts'); if(ducts) p.push("внутр. жовчні протоки: " + ducts);
-            let mass = getMsValue('liv_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            let cont = getMsValue('liv_cont'); if(cont) p.push("Контури: " + cont);
+            let struct = getMsValue('liv_struct'); if(struct) p.push("Структура: " + struct);
+            let echo = getMsValue('liv_echo'); if(echo) p.push("Ехогенність: " + echo);
+            let att = getMsValue('liv_att'); if(att) p.push("Затухання УЗ: " + att);
+            let vasc = getMsValue('liv_vasc'); if(vasc) p.push("Судинна архітектоніка: " + vasc);
+            let ducts = getMsValue('liv_ducts'); if(ducts) p.push("Внутр. жовчні протоки: " + ducts);
+            let mass = getMsValue('liv_mass'); if(mass) p.push("Додаткові утворення: " + mass);
 
             let pvSt = getMsValue('liv_pv_st'); let pvMm = document.getElementById('liv_pv_mm').value;
-            if(pvSt || pvMm) p.push("портальна вена: " + ((pvMm ? formatMM(pvMm) + ", " : "") + (pvSt ? pvSt : "")).trim());
-            let ivc = getMsValue('liv_ivc'); if(ivc) p.push("нижня порожниста вена: " + ivc);
-            let hv = getMsValue('liv_hv'); if(hv) p.push("печінкові вени: " + hv);
+            if(pvSt || pvMm) p.push("Портальна вена: " + ((pvMm ? formatMM(pvMm) + ", " : "") + (pvSt ? pvSt : "")).trim());
+            let ivc = getMsValue('liv_ivc'); if(ivc) p.push("Нижня порожниста вена: " + ivc);
+            let hv = getMsValue('liv_hv'); if(hv) p.push("Печінкові вени: " + hv);
 
             if(p.length) h += `<p><strong>Печінка:</strong> ${p.join('. ')}.</p>`;
         }
@@ -812,20 +812,20 @@
         if (document.getElementById('chk_gb').checked) {
             let p = [];
             let state = getMsValue('gb_state'); if(state) p.push(state);
-            let loc = getMsValue('gb_loc'); if(loc) p.push("розміщення: " + loc);
-            let form = getMsValue('gb_form'); if(form) p.push("форма: " + form);
+            let loc = getMsValue('gb_loc'); if(loc) p.push("Розміщення: " + loc);
+            let form = getMsValue('gb_form'); if(form) p.push("Форма: " + form);
             
             let sizeSt = getMsValue('gb_size_st');
             let l = document.getElementById('gb_l').value; let w = document.getElementById('gb_w').value;
-            if(sizeSt || l || w) p.push("розміри: " + ((l && w ? `${l} x ${formatMM(w)}, ` : "") + (sizeSt ? sizeSt : "")).trim());
+            if(sizeSt || l || w) p.push("Розміри: " + ((l && w ? `${l} x ${formatMM(w)}, ` : "") + (sizeSt ? sizeSt : "")).trim());
 
             let walls = getMsValue('gb_walls'); let wallMm = document.getElementById('gb_wall_mm').value;
-            if(walls || wallMm) p.push("стінки: " + ((walls ? walls : "") + (wallMm ? " до " + formatMM(wallMm) : "")).trim());
-            let lumen = getMsValue('gb_lumen'); if(lumen) p.push("в просвіті: " + lumen);
-            let mass = getMsValue('gb_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            if(walls || wallMm) p.push("Стінки: " + ((walls ? walls : "") + (wallMm ? " до " + formatMM(wallMm) : "")).trim());
+            let lumen = getMsValue('gb_lumen'); if(lumen) p.push("В просвіті: " + lumen);
+            let mass = getMsValue('gb_mass'); if(mass) p.push("Додаткові утворення: " + mass);
             
             let incl = getMsValue('gb_incl'); let inclMm = document.getElementById('gb_incl_mm').value; let inclProp = getMsValue('gb_incl_prop');
-            if(incl || inclMm || inclProp) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? ", " + formatMM(inclMm) : "") + (inclProp ? ", " + inclProp : "")).trim());
+            if(incl || inclMm || inclProp) p.push("Гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? ", " + formatMM(inclMm) : "") + (inclProp ? ", " + inclProp : "")).trim());
 
             if(p.length) h += `<p><strong>Жовчний міхур:</strong> ${p.join('. ')}.</p>`;
         }
@@ -835,8 +835,8 @@
             let p = [];
             let state = getMsValue('cd_state'); if(state) p.push(state);
             let exp = getMsValue('cd_exp'); let mm = document.getElementById('cd_mm').value;
-            if(exp || mm) p.push("розширення: " + ((exp ? exp : "") + (mm ? " " + formatMM(mm) : "")).trim());
-            let lumen = getMsValue('cd_lumen'); if(lumen) p.push("видимий просвіт: " + lumen);
+            if(exp || mm) p.push("Розширення: " + ((exp ? exp : "") + (mm ? " " + formatMM(mm) : "")).trim());
+            let lumen = getMsValue('cd_lumen'); if(lumen) p.push("Видимий просвіт: " + lumen);
             
             if(p.length) h += `<p><strong>Холедох:</strong> ${p.join('. ')}.</p>`;
         }
@@ -845,7 +845,7 @@
         if (document.getElementById('chk_pan').checked) {
             let p = [];
             let vis = getMsValue('pan_vis'); if(vis) p.push(vis);
-            let form = getMsValue('pan_form'); if(form) p.push("форма: " + form);
+            let form = getMsValue('pan_form'); if(form) p.push("Форма: " + form);
             
             let sizeSt = getMsValue('pan_size_st');
             let ph = document.getElementById('pan_head').value; let pb = document.getElementById('pan_body').value; let pt = document.getElementById('pan_tail').value;
@@ -859,13 +859,13 @@
                 p.push(sStr.trim());
             }
 
-            let cont = getMsValue('pan_cont'); if(cont) p.push("контури: " + cont);
-            let par = getMsValue('pan_par'); if(par) p.push("паренхіма: " + par);
-            let echo = getMsValue('pan_echo'); if(echo) p.push("ехогенність: " + echo);
-            let mass = getMsValue('pan_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            let cont = getMsValue('pan_cont'); if(cont) p.push("Контури: " + cont);
+            let par = getMsValue('pan_par'); if(par) p.push("Паренхіма: " + par);
+            let echo = getMsValue('pan_echo'); if(echo) p.push("Ехогенність: " + echo);
+            let mass = getMsValue('pan_mass'); if(mass) p.push("Додаткові утворення: " + mass);
             
             let duct = getMsValue('pan_duct'); let ductMm = document.getElementById('pan_duct_mm').value;
-            if(duct || ductMm) p.push("панкреатична протока: " + ((duct ? duct : "") + (ductMm ? ", " + formatMM(ductMm) : "")).trim());
+            if(duct || ductMm) p.push("Панкреатична протока: " + ((duct ? duct : "") + (ductMm ? ", " + formatMM(ductMm) : "")).trim());
 
             if(p.length) h += `<p><strong>Підшлункова залоза:</strong> ${p.join('. ')}.</p>`;
         }
@@ -874,7 +874,7 @@
         if (document.getElementById('chk_spl').checked) {
             let p = [];
             let vis = getMsValue('spl_vis'); if(vis) p.push(vis);
-            let form = getMsValue('spl_form'); if(form) p.push("форма: " + form);
+            let form = getMsValue('spl_form'); if(form) p.push("Форма: " + form);
             
             let sizeSt = getMsValue('spl_size_st');
             let sl = document.getElementById('spl_l').value; let st = document.getElementById('spl_t').value;
@@ -887,13 +887,13 @@
                 p.push(sStr.trim());
             }
 
-            let cont = getMsValue('spl_cont'); if(cont) p.push("контури: " + cont);
-            let struct = getMsValue('spl_struct'); if(struct) p.push("структура: " + struct);
-            let echo = getMsValue('spl_echo'); if(echo) p.push("ехогенність: " + echo);
-            let mass = getMsValue('spl_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            let cont = getMsValue('spl_cont'); if(cont) p.push("Контури: " + cont);
+            let struct = getMsValue('spl_struct'); if(struct) p.push("Структура: " + struct);
+            let echo = getMsValue('spl_echo'); if(echo) p.push("Ехогенність: " + echo);
+            let mass = getMsValue('spl_mass'); if(mass) p.push("Додаткові утворення: " + mass);
             
             let vein = getMsValue('spl_vein'); let veinMm = document.getElementById('spl_vein_mm').value;
-            if(vein || veinMm) p.push("селезінкова вена: " + ((vein ? vein : "") + (veinMm ? " " + formatMM(veinMm) : "")).trim());
+            if(vein || veinMm) p.push("Селезінкова вена: " + ((vein ? vein : "") + (veinMm ? " " + formatMM(veinMm) : "")).trim());
 
             if(p.length) h += `<p><strong>Селезінка:</strong> ${p.join('. ')}.</p>`;
         }
@@ -902,10 +902,10 @@
         if (document.getElementById('chk_rk').checked) {
             let p = [];
             let vis = getMsValue('rk_vis'); if(vis) p.push(vis);
-            let loc = getMsValue('rk_loc'); if(loc) p.push("розміщення: " + loc);
-            let mob = getMsValue('rk_mob'); if(mob) p.push("рухливість: " + mob);
-            let form = getMsValue('rk_form'); if(form) p.push("форма: " + form);
-            let cont = getMsValue('rk_cont'); if(cont) p.push("контури: " + cont);
+            let loc = getMsValue('rk_loc'); if(loc) p.push("Розміщення: " + loc);
+            let mob = getMsValue('rk_mob'); if(mob) p.push("Рухливість: " + mob);
+            let form = getMsValue('rk_form'); if(form) p.push("Форма: " + form);
+            let cont = getMsValue('rk_cont'); if(cont) p.push("Контури: " + cont);
             
             let sizeSt = getMsValue('rk_size_st');
             let rkl = document.getElementById('rk_l').value; let rkw = document.getElementById('rk_w').value;
@@ -918,24 +918,24 @@
                 p.push(sStr.trim());
             }
 
-            let echo = getMsValue('rk_echo'); if(echo) p.push("ехогенність: " + echo);
-            let struct = getMsValue('rk_struct'); if(struct) p.push("структура: " + struct);
+            let echo = getMsValue('rk_echo'); if(echo) p.push("Ехогенність: " + echo);
+            let struct = getMsValue('rk_struct'); if(struct) p.push("Структура: " + struct);
             
             let parSt = getMsValue('rk_par_st'); let parMm = document.getElementById('rk_par_mm').value;
-            if(parSt || parMm) p.push("товщ. паренхіми: " + ((parSt ? parSt : "") + (parMm ? " " + formatMM(parMm) : "")).trim());
+            if(parSt || parMm) p.push("Товщ. паренхіми: " + ((parSt ? parSt : "") + (parMm ? " " + formatMM(parMm) : "")).trim());
 
-            let cmd = getMsValue('rk_cmd'); if(cmd) p.push("КМД: " + cmd);
-            let ck = getMsValue('rk_ck'); if(ck) p.push("центральний комплекс: " + ck);
-            let mass = getMsValue('rk_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            let cmd = getMsValue('rk_cmd'); if(cmd) p.push("Кортико-медулярна диференціація: " + cmd);
+            let ck = getMsValue('rk_ck'); if(ck) p.push("Центральний комплекс: " + ck);
+            let mass = getMsValue('rk_mass'); if(mass) p.push("Додаткові утворення: " + mass);
             
             let cal = getMsValue('rk_cal'); let calMm = document.getElementById('rk_cal_mm').value;
-            if(cal || calMm) p.push("чашечки: " + ((cal ? cal : "") + (calMm ? " " + formatMM(calMm) : "")).trim());
+            if(cal || calMm) p.push("Чашечки: " + ((cal ? cal : "") + (calMm ? " " + formatMM(calMm) : "")).trim());
             let pel = getMsValue('rk_pel'); let pelMm = document.getElementById('rk_pel_mm').value;
-            if(pel || pelMm) p.push("лоханка: " + ((pel ? pel : "") + (pelMm ? " " + formatMM(pelMm) : "")).trim());
+            if(pel || pelMm) p.push("Лоханка: " + ((pel ? pel : "") + (pelMm ? " " + formatMM(pelMm) : "")).trim());
             let incl = getMsValue('rk_incl'); let inclMm = document.getElementById('rk_incl_mm').value;
-            if(incl || inclMm) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? " " + formatMM(inclMm) : "")).trim());
+            if(incl || inclMm) p.push("Гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? " " + formatMM(inclMm) : "")).trim());
             let ur = getMsValue('rk_ur'); let urMm = document.getElementById('rk_ur_mm').value;
-            if(ur || urMm) p.push("сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
+            if(ur || urMm) p.push("Сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
 
             if(p.length) h += `<p><strong>Права нирка:</strong> ${p.join('. ')}.</p>`;
         }
@@ -944,10 +944,10 @@
         if (document.getElementById('chk_lk').checked) {
             let p = [];
             let vis = getMsValue('lk_vis'); if(vis) p.push(vis);
-            let loc = getMsValue('lk_loc'); if(loc) p.push("розміщення: " + loc);
-            let mob = getMsValue('lk_mob'); if(mob) p.push("рухливість: " + mob);
-            let form = getMsValue('lk_form'); if(form) p.push("форма: " + form);
-            let cont = getMsValue('lk_cont'); if(cont) p.push("контури: " + cont);
+            let loc = getMsValue('lk_loc'); if(loc) p.push("Розміщення: " + loc);
+            let mob = getMsValue('lk_mob'); if(mob) p.push("Рухливість: " + mob);
+            let form = getMsValue('lk_form'); if(form) p.push("Форма: " + form);
+            let cont = getMsValue('lk_cont'); if(cont) p.push("Контури: " + cont);
             
             let sizeSt = getMsValue('lk_size_st');
             let lkl = document.getElementById('lk_l').value; let lkw = document.getElementById('lk_w').value;
@@ -960,24 +960,24 @@
                 p.push(sStr.trim());
             }
 
-            let echo = getMsValue('lk_echo'); if(echo) p.push("ехогенність: " + echo);
-            let struct = getMsValue('lk_struct'); if(struct) p.push("структура: " + struct);
+            let echo = getMsValue('lk_echo'); if(echo) p.push("Ехогенність: " + echo);
+            let struct = getMsValue('lk_struct'); if(struct) p.push("Структура: " + struct);
             
             let parSt = getMsValue('lk_par_st'); let parMm = document.getElementById('lk_par_mm').value;
-            if(parSt || parMm) p.push("товщ. паренхіми: " + ((parSt ? parSt : "") + (parMm ? " " + formatMM(parMm) : "")).trim());
+            if(parSt || parMm) p.push("Товщ. паренхіми: " + ((parSt ? parSt : "") + (parMm ? " " + formatMM(parMm) : "")).trim());
 
-            let cmd = getMsValue('lk_cmd'); if(cmd) p.push("КМД: " + cmd);
-            let ck = getMsValue('lk_ck'); if(ck) p.push("центральний комплекс: " + ck);
-            let mass = getMsValue('lk_mass'); if(mass) p.push("додаткові утворення: " + mass);
+            let cmd = getMsValue('lk_cmd'); if(cmd) p.push("Кортико-медулярна диференціація: " + cmd);
+            let ck = getMsValue('lk_ck'); if(ck) p.push("Центральний комплекс: " + ck);
+            let mass = getMsValue('lk_mass'); if(mass) p.push("Додаткові утворення: " + mass);
             
             let cal = getMsValue('lk_cal'); let calMm = document.getElementById('lk_cal_mm').value;
-            if(cal || calMm) p.push("чашечки: " + ((cal ? cal : "") + (calMm ? " " + formatMM(calMm) : "")).trim());
+            if(cal || calMm) p.push("Чашечки: " + ((cal ? cal : "") + (calMm ? " " + formatMM(calMm) : "")).trim());
             let pel = getMsValue('lk_pel'); let pelMm = document.getElementById('lk_pel_mm').value;
-            if(pel || pelMm) p.push("лоханка: " + ((pel ? pel : "") + (pelMm ? " " + formatMM(pelMm) : "")).trim());
+            if(pel || pelMm) p.push("Лоханка: " + ((pel ? pel : "") + (pelMm ? " " + formatMM(pelMm) : "")).trim());
             let incl = getMsValue('lk_incl'); let inclMm = document.getElementById('lk_incl_mm').value;
-            if(incl || inclMm) p.push("гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? " " + formatMM(inclMm) : "")).trim());
+            if(incl || inclMm) p.push("Гіперехогенні включення: " + ((incl ? incl : "") + (inclMm ? " " + formatMM(inclMm) : "")).trim());
             let ur = getMsValue('lk_ur'); let urMm = document.getElementById('lk_ur_mm').value;
-            if(ur || urMm) p.push("сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
+            if(ur || urMm) p.push("Сечовід: " + ((ur ? ur : "") + (urMm ? " " + formatMM(urMm) : "")).trim());
 
             if(p.length) h += `<p><strong>Ліва нирка:</strong> ${p.join('. ')}.</p>`;
         }
