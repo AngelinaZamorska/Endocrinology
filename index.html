@@ -232,7 +232,10 @@
     <div id="page-abd" class="page">
         <h1>ОПИС УЗД Органів черевної порожнини</h1>
 
-        <h2><label><input type="checkbox" id="chk_liv" onchange="toggleSec('sec_liv')"> 1. Печінка</label></h2>
+        <h2>
+            <label><input type="checkbox" id="chk_liv" onchange="toggleSec('sec_liv')"> 1. Печінка</label>
+            <button onclick="fillOrganNorm('liv')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_liv" style="display: none;">
             <div class="row">
                 <div class="field"><label>Розміщення:</label><div class="ms-container" id="liv_loc" data-single="true" data-options="звичайне"></div></div>
@@ -263,7 +266,10 @@
             </div>
         </div>
 
-        <h2><label><input type="checkbox" id="chk_gb" onchange="toggleSec('sec_gb')"> 2. Жовчний міхур</label></h2>
+       <h2>
+            <label><input type="checkbox" id="chk_gb" onchange="toggleSec('sec_gb')"> 2. Жовчний міхур</label>
+            <button onclick="fillOrganNorm('gb')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_gb" style="display: none;">
             <div class="row">
                 <div class="field"><label>Стан:</label><div class="ms-container" id="gb_state" data-single="true" data-options="візуалізований|не візуалізований|видалений"></div></div>
@@ -288,7 +294,10 @@
             </div>
         </div>
 
-        <h2><label><input type="checkbox" id="chk_cd" onchange="toggleSec('sec_cd')"> 3. Холедох</label></h2>
+        <h2>
+            <label><input type="checkbox" id="chk_cd" onchange="toggleSec('sec_cd')"> 3. Холедох</label>
+            <button onclick="fillOrganNorm('cd')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_cd" style="display: none;">
             <div class="row">
                 <div class="field"><label>Стан:</label><div class="ms-container" id="cd_state" data-single="true" data-options="візуалізується|не візуалізується"></div></div>
@@ -298,7 +307,10 @@
             </div>
         </div>
 
-        <h2><label><input type="checkbox" id="chk_pan" onchange="toggleSec('sec_pan')"> 4. Підшлункова залоза</label></h2>
+        <h2>
+            <label><input type="checkbox" id="chk_pan" onchange="toggleSec('sec_pan')"> 4. Підшлункова залоза</label>
+            <button onclick="fillOrganNorm('pan')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_pan" style="display: none;">
             <div class="row">
                 <div class="field"><label>Візуалізація:</label><div class="ms-container" id="pan_vis" data-single="true" data-options="візуалізується на всьому протязі|візуалізується фрагментовано через метеоризм|не візуалізується|видалена"></div></div>
@@ -322,7 +334,10 @@
             </div>
         </div>
 
-        <h2><label><input type="checkbox" id="chk_spl" onchange="toggleSec('sec_spl')"> 5. Селезінка</label></h2>
+        <h2>
+            <label><input type="checkbox" id="chk_spl" onchange="toggleSec('sec_spl')"> 5. Селезінка</label>
+            <button onclick="fillOrganNorm('spl')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_spl" style="display: none;">
             <div class="row">
                 <div class="field"><label>Візуалізація:</label><div class="ms-container" id="spl_vis" data-single="true" data-options="візуалізується|не візуалізується|видалена"></div></div>
@@ -343,7 +358,10 @@
             </div>
         </div>
 
-        <h2><label><input type="checkbox" id="chk_rk" onchange="toggleSec('sec_rk')"> 6. Права нирка</label></h2>
+       <h2>
+            <label><input type="checkbox" id="chk_rk" onchange="toggleSec('sec_rk')"> 6. Права нирка</label>
+            <button onclick="fillOrganNorm('rk')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_rk" style="display: none;">
             <div class="row">
                 <div class="field"><label>Стан:</label><div class="ms-container" id="rk_vis" data-single="true" data-options="візуалізована|не візуалізована|видалена"></div></div>
@@ -382,7 +400,10 @@
             </div>
         </div>
 
-        <h2><label><input type="checkbox" id="chk_lk" onchange="toggleSec('sec_lk')"> 7. Ліва нирка</label></h2>
+       <h2>
+            <label><input type="checkbox" id="chk_lk" onchange="toggleSec('sec_lk')"> 7. Ліва нирка</label>
+            <button onclick="fillOrganNorm('lk')" style="margin-left: 15px; font-size: 12px; background: #27ae60; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;">🌟 Норма</button>
+        </h2>
         <div class="section-box" id="sec_lk" style="display: none;">
             <div class="row">
                 <div class="field"><label>Стан:</label><div class="ms-container" id="lk_vis" data-single="true" data-options="візуалізована|не візуалізована|видалена"></div></div>
@@ -1203,7 +1224,131 @@
         const calcMethod = document.getElementById('calc_method');
         if (calcMethod) calcMethod.selectedIndex = 0;
     });
+    // =======================================================
+    // ФУНКЦІЇ ДЛЯ АВТОЗАПОВНЕННЯ (ІНДИВІДУАЛЬНА НОРМА ОРГАНІВ)
+    // =======================================================
     
+    // Допоміжна функція: програмно обирає значення у мультиселекті
+    function setSelect(id, values) {
+        let el = document.getElementById(id);
+        if(!el) return;
+        
+        el.querySelectorAll('input').forEach(inp => inp.checked = false);
+        values.forEach(val => {
+            let inp = el.querySelector(`input[value="${val}"]`);
+            if(inp) inp.checked = true;
+        });
+        
+        let btn = el.querySelector('.ms-btn');
+        if(btn) updateBtnText(el, btn);
+    }
+
+    // Заповнення конкретного органу
+    function fillOrganNorm(org) {
+        // Відкриваємо блок органу, якщо він закритий
+        let chk = document.getElementById(`chk_${org}`);
+        let sec = document.getElementById(`sec_${org}`);
+        if (chk && !chk.checked) {
+            chk.checked = true;
+            sec.style.display = 'block';
+        }
+
+        // Очищаємо всі числові поля тільки в цьому блоці
+        if(sec) {
+            sec.querySelectorAll('input[type="number"]').forEach(inp => inp.value = '');
+        }
+
+        // Визначаємо, який орган заповнювати
+        switch(org) {
+            case 'liv':
+                setSelect('liv_loc', ['звичайне']);
+                setSelect('liv_form', ['не змінена']);
+                setSelect('liv_size_state', ['не збільшені']);
+                setSelect('liv_cont', ['рівні']);
+                setSelect('liv_struct', ['однорідна']);
+                setSelect('liv_echo', ['звичайна']);
+                setSelect('liv_att', ['не відмічається']);
+                setSelect('liv_vasc', ['не змінена']);
+                setSelect('liv_ducts', ['не розширені']);
+                setSelect('liv_mass', ['не виявлені']);
+                setSelect('liv_pv_st', ['не розширена']);
+                setSelect('liv_ivc', ['не розширена']);
+                setSelect('liv_hv', ['не розширені']);
+                break;
+            case 'gb':
+                setSelect('gb_state', ['візуалізований']);
+                setSelect('gb_loc', ['звичайне']);
+                setSelect('gb_form', ['грушоподібна']); 
+                setSelect('gb_size_st', ['не збільшений']);
+                setSelect('gb_walls', ['не ущільнені', 'не потовщені']);
+                setSelect('gb_lumen', ['однорідний анехогенний вміст']);
+                setSelect('gb_mass', ['не виявлені']);
+                setSelect('gb_incl', ['відсутні']);
+                break;
+            case 'cd':
+                setSelect('cd_state', ['візуалізується']);
+                setSelect('cd_exp', ['не розширений']);
+                setSelect('cd_lumen', ['анехогенний']);
+                break;
+            case 'pan':
+                setSelect('pan_vis', ['на всьому протязі']);
+                setSelect('pan_form', ['не змінена']);
+                setSelect('pan_size_st', ['не збільшені']);
+                setSelect('pan_cont', ['рівні', 'чіткі']);
+                setSelect('pan_par', ['однорідна']);
+                setSelect('pan_echo', ['звичайна']);
+                setSelect('pan_mass', ['не виявлені']);
+                setSelect('pan_duct', ['не розширена']);
+                break;
+            case 'spl':
+                setSelect('spl_vis', ['візуалізується']);
+                setSelect('spl_form', ['не змінена']);
+                setSelect('spl_size_st', ['не збільшені']);
+                setSelect('spl_cont', ['рівні']);
+                setSelect('spl_struct', ['однорідна']);
+                setSelect('spl_echo', ['звичайна']);
+                setSelect('spl_vein', ['не розширена']);
+                setSelect('spl_mass', ['не виявлені']);
+                break;
+            case 'rk':
+                setSelect('rk_vis', ['візуалізована']);
+                setSelect('rk_loc', ['звичайне']);
+                setSelect('rk_mob', ['не змінена']);
+                setSelect('rk_form', ['звичайна']);
+                setSelect('rk_cont', ['рівні']);
+                setSelect('rk_size_st', ['не збільшені']);
+                setSelect('rk_echo', ['звичайна']);
+                setSelect('rk_struct', ['однорідна']);
+                setSelect('rk_par_st', ['не змінена']);
+                setSelect('rk_cmd', ['не змінена']);
+                setSelect('rk_ck', ['не змінений']);
+                setSelect('rk_mass', ['не виявлені']);
+                setSelect('rk_cal', ['не розширені']);
+                setSelect('rk_pel', ['не розширена']);
+                setSelect('rk_incl', ['відсутні']);
+                setSelect('rk_ur', ['не визначається']);
+                break;
+            case 'lk':
+                setSelect('lk_vis', ['візуалізована']);
+                setSelect('lk_loc', ['звичайне']);
+                setSelect('lk_mob', ['не змінена']);
+                setSelect('lk_form', ['звичайна']);
+                setSelect('lk_cont', ['рівні']);
+                setSelect('lk_size_st', ['не збільшені']);
+                setSelect('lk_echo', ['звичайна']);
+                setSelect('lk_struct', ['однорідна']);
+                setSelect('lk_par_st', ['не змінена']);
+                setSelect('lk_cmd', ['не змінена']);
+                setSelect('lk_ck', ['не змінений']);
+                setSelect('lk_mass', ['не виявлені']);
+                setSelect('lk_cal', ['не розширені']);
+                setSelect('lk_pel', ['не розширена']);
+                setSelect('lk_incl', ['відсутні']);
+                setSelect('lk_ur', ['не визначається']);
+                break;
+            
+        }
+    }
 </script>
 </body>
 </html>
