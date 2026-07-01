@@ -160,17 +160,17 @@
             </div>
             <div class="row">
                 <div class="field"><label>Права частка: стан</label><div class="ms-container" id="ms_r_type" data-single="true" data-options="права частка|культя правої частки|залишкова тканина правої частки|не визначається"></div></div>
+                <div class="field small"><label>Об'єм (см³)</label><input type="number" step="0.1" id="r_v" placeholder="Вручну/Авто" style="font-weight:bold; background:#e8f8f5;"></div>
                 <div class="field small"><label>Довжина (см)</label><input type="number" id="r_l" step="0.1" oninput="calcVol()"></div>
                 <div class="field small"><label>Товщ. (см)</label><input type="number" id="r_t" step="0.1" oninput="calcVol()"></div>
                 <div class="field small"><label>Ширина (см)</label><input type="number" id="r_w" step="0.1" oninput="calcVol()"></div>
-                <div class="field small"><label>Об'єм (см³)</label><input type="number" step="0.1" id="r_v" placeholder="Вручну/Авто" style="font-weight:bold; background:#e8f8f5;"></div>
             </div>
             <div class="row">
                 <div class="field"><label>Ліва частка: стан</label><div class="ms-container" id="ms_l_type" data-single="true" data-options="ліва частка|культя лівої частки|залишкова тканина лівої частки|не визначається"></div></div>
+                <div class="field small"><label>Об'єм (см³)</label><input type="number" step="0.1" id="l_v" placeholder="Вручну/Авто" style="font-weight:bold; background:#e8f8f5;"></div>
                 <div class="field small"><label>Довжина (см)</label><input type="number" id="l_l" step="0.1" oninput="calcVol()"></div>
                 <div class="field small"><label>Товщ. (см)</label><input type="number" id="l_t" step="0.1" oninput="calcVol()"></div>
                 <div class="field small"><label>Ширина (см)</label><input type="number" id="l_w" step="0.1" oninput="calcVol()"></div>
-                <div class="field small"><label>Об'єм (см³)</label><input type="number" step="0.1" id="l_v" placeholder="Вручну/Авто" style="font-weight:bold; background:#e8f8f5;"></div>
             </div>
             <div class="row">
                 <div class="field small"><label>Перешийок (стан):</label><div class="ms-container" id="ms_isthmus_state" data-single="true" data-options="візуалізується|не візуалізується|видалений"></div></div>
@@ -219,7 +219,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="field"><label>EU-TIRADS:</label><div class="ms-container" id="ms_c_tirads" data-single="true" data-options="1|2|3|4|5"></div></div>
+            <div class="field"><label>EU-TIRADS:</label><div class="ms-container" id="ms_c_tirads" data-single="false" data-options="1|2|3|4|5"></div></div>
             <div class="field"><label>Висновок (свій текст):</label><input type="text" id="c_conclusion" placeholder="..."></div>
         </div>
         <div class="row">
