@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Робоче місце лікаря УЗД (PRO)</title>
+    
     <style>
         /* Базові стилі */
         body { font-family: Arial, sans-serif; background: #f0f4f8; color: #000; margin: 0; padding: 0; }
@@ -102,6 +103,48 @@
         .generate-btn { display: block; width: 100%; background: #27ae60; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 30px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .generate-btn:hover { background: #2ecc71; }
         .section-box { border: 1px solid #e5e7e9; padding: 15px; border-radius: 8px; margin-bottom: 10px; background: #fcfcfc;}
+    /* --- ТЕМНА ТЕМА --- */
+        body.dark-theme { background: #1e2124; color: #e0e0e0; }
+        
+        body.dark-theme .page-container,
+        body.dark-theme .home-card,
+        body.dark-theme .ms-dropdown,
+        body.dark-theme .ms-custom-input,
+        body.dark-theme .dynamic-item {
+            background: #282b30; border-color: #4f545c; color: #e0e0e0;
+        }
+        
+        body.dark-theme .navbar { background: #18191c; }
+        
+        body.dark-theme h1, 
+        body.dark-theme h2, 
+        body.dark-theme label { color: #e0e0e0; }
+        
+        body.dark-theme h2 { background: #36393e !important; border-bottom-color: #4f545c; }
+        
+        body.dark-theme .section-box, 
+        body.dark-theme .calc-box, 
+        body.dark-theme .dynamic-section {
+            background: #36393e; border-color: #4f545c;
+        }
+        
+        body.dark-theme input, 
+        body.dark-theme select, 
+        body.dark-theme textarea,
+        body.dark-theme .ms-btn {
+            background: #424549 !important; color: #e0e0e0; border-color: #4f545c;
+        }
+        
+        body.dark-theme input:focus, 
+        body.dark-theme select:focus, 
+        body.dark-theme textarea:focus, 
+        body.dark-theme .ms-btn:focus {
+            border-color: #3498db; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
+        }
+
+        body.dark-theme .ms-option:hover { background: #4f545c; }
+        body.dark-theme .ms-btn:after { color: #b9bbbe; }
+        body.dark-theme input::placeholder { color: #888; }
     </style>
 </head>
 <body>
@@ -111,6 +154,7 @@
     <button class="nav-btn" id="nav-thyroid" onclick="switchPage('thyroid')">Щитоподібна залоза</button>
     <button class="nav-btn" id="nav-abd" onclick="switchPage('abd')">Органи черевної порожнини</button>
     <button class="nav-btn" id="nav-mammary" onclick="switchPage('mammary')">Молочні залози</button>
+    <button id="theme-toggle" class="nav-btn" style="margin-left: auto; background: #e67e22;">🌙 Темна тема</button>
 </div>
 
 <div class="page-container">
@@ -1526,6 +1570,34 @@
         }
     }
 });
+// --- ПЕРЕМИКАЧ ТЕМИ ---
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme');
+
+    // Якщо раніше була обрана темна тема, відразу вмикаємо її
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggleBtn.innerText = '☀️ Світла тема';
+        themeToggleBtn.style.background = '#f39c12';
+    }
+
+    // Реакція на клік
+    themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        let theme = 'light';
+        
+        if (document.body.classList.contains('dark-theme')) {
+            theme = 'dark';
+            themeToggleBtn.innerText = '☀️ Світла тема';
+            themeToggleBtn.style.background = '#f39c12';
+        } else {
+            themeToggleBtn.innerText = '🌙 Темна тема';
+            themeToggleBtn.style.background = '#e67e22';
+        }
+        
+        // Зберігаємо вибір в пам'ять браузера
+        localStorage.setItem('theme', theme);
+    });
 </script>
 </body>
 </html>
