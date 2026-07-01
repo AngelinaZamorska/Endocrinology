@@ -477,7 +477,10 @@
     
 
     <div id="page-mammary" class="page">
-        <h1>ОПИС УЗД Молочних залоз</h1>
+        <h1 style="display: flex; justify-content: center; align-items: center; gap: 15px;">
+            ОПИС УЗД Молочних залоз
+            <button onclick="fillOrganNorm('mammary')" style="font-size: 14px; background: #27ae60; color: white; border: none; padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: normal;">🌟 Заповнити норму</button>
+        </h1>
         
         <div class="section-box">
             <div class="row">
@@ -1464,6 +1467,30 @@
                 break;
             case 'fluid':
                 setSelect('free_fluid', ['відсутня']);
+                break;
+            case 'mammary':
+                // Загальне
+                setSelect('mam_age_match', ['відповідають віку']);
+                
+                // Права
+                setSelect('mam_r_skin', ['не змінена']);
+                setSelect('mam_r_duct_c', ['не розширені']);
+                setSelect('mam_r_duct_p', ['не розширені']);
+                setSelect('mam_r_fibr', ['відсутні']);
+                setSelect('mam_r_ln', ['не візуалізуються']); // або 'не змінені', як вам зручніше
+                setSelect('mam_r_mass_gen', ['не виявлені']);
+                
+                // Ліва
+                setSelect('mam_l_skin', ['не змінена']);
+                setSelect('mam_l_duct_c', ['не розширені']);
+                setSelect('mam_l_duct_p', ['не розширені']);
+                setSelect('mam_l_fibr', ['відсутні']);
+                setSelect('mam_l_ln', ['не візуалізуються']);
+                setSelect('mam_l_mass_gen', ['не виявлені']);
+                
+                // Заключення
+                setSelect('mam_conclusion', ['Патологічних змін на момент огляду не виявлено']);
+                setSelect('mam_birads_global', ['1']);
                 break;
         }
     }
