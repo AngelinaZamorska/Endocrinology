@@ -1494,6 +1494,38 @@
                 break;
         }
     }
+    document.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+        // Знаходимо будь-який відкритий дропдаун на всій сторінці
+        const openDropdown = document.querySelector('.ms-dropdown.active');
+        
+        if (openDropdown) {
+            e.preventDefault(); 
+            
+            // Знаходимо контейнер, в якому цей дропдаун лежить
+            const currentContainer = openDropdown.closest('.ms-container');
+            // Знаходимо кнопку цього ж контейнера
+            const currentBtn = currentContainer.querySelector('.ms-btn');
+            
+            // Закриваємо поточний
+            openDropdown.classList.remove('active');
+            
+            // Знаходимо всі кнопки на сторінці (включаючи приховані сторінки)
+            const allMsBtns = Array.from(document.querySelectorAll('.ms-container .ms-btn'));
+            const currentIndex = allMsBtns.indexOf(currentBtn);
+            
+            // Відкриваємо наступний
+            if (currentIndex !== -1 && currentIndex < allMsBtns.length - 1) {
+                const nextBtn = allMsBtns[currentIndex + 1];
+                
+        
+                
+                nextBtn.click();
+                nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+});
 </script>
 </body>
 </html>
