@@ -1032,89 +1032,195 @@
 
         let h = `<div style="font-size: 14pt; color: #000000; font-family: Arial, sans-serif; line-height: 1.5;">`;
         
-        h += `<p><strong>Область дослідження:</strong> ${document.getElementById('p_region').value}</p>`;
-        h += `<p><strong>Візуалізується:</strong> ${getMsValue('ms_visual') || "___"}</p>`;
-        h += `<p><strong>Розміщена:</strong> ${getMsValue('ms_location') || "___"}</p>`;
-        h += `<p><strong>Контур:</strong> ${getMsValue('ms_contour') || "___"}. `;
-        h += `<strong>Капсула:</strong> ${getMsValue('ms_capsule') || "___"}</p>`;
+        let region = document.getElementById('p_region').value.trim();
+        if (region) h += `<p><strong>Область дослідження:</strong> ${region}</p>`;
         
-        h += `<p><strong>Об'єм:</strong></p>`;
-        // Права частка
-        let r_type = getMsValue('ms_r_type') || "права частка";
+        let visual = getMsValue('ms_visual');
+        if (visual) h += `<p><strong>Візуалізується:</strong> ${visual}</p>`;
+        
+        let loc = getMsValue('ms_location');
+        if (loc) h += `<p><strong>Розміщена:</strong> ${loc}</p>`;
+        
+        let contour = getMsValue('ms_contour');
+        let capsule = getMsValue('ms_capsule');
+        if (contour || capsule) {
+            let pArr = [];
+            if (contour) pArr.push(`Контур: ${contour}`);
+            if (capsule) pArr.push(`Капсула: ${capsule}`);
+            h += `<p><strong>${pArr.join('. ')}</strong></p>`;
+        }
+        
         let rv = document.getElementById('r_v').value;
-        let r_l = document.getElementById('r_l').value;
-        let r_t = document.getElementById('r_t').value;
-        let r_w = document.getElementById('r_w').value;
-        
-        if (rv) {
-            let dims_r = (r_l && r_t && r_w) ? ` (довжина ${r_l} см, товщина ${r_t} см, ширина ${r_w} см)` : ``;
-            h += `<p>Об'єм ${r_type} за методом ${method}: <strong>${rv} см³</strong>${dims_r};</p>`;
-        }
-
-        // Ліва частка
-        let l_type = getMsValue('ms_l_type') || "ліва частка";
         let lv = document.getElementById('l_v').value;
-        let l_l = document.getElementById('l_l').value;
-        let l_t = document.getElementById('l_t').value;
-        let l_w = document.getElementById('l_w').value;
         
-        if (lv) {
-            let dims_l = (l_l && l_t && l_w) ? ` (довжина ${l_l} см, товщина ${l_t} см, ширина ${l_w} см)` : ``;
-            h += `<p>Об'єм ${l_type} за методом ${method}: <strong>${lv} см³</strong>${dims_l};</p>`;
+        if (rv || lv) {
+            h += `<p><strong>Об'єм:</strong></p>`;
+            
+            if (rv) {
+                let r_type = getMsValue('ms_r_type') || "права частка";
+                let r_l = document.getElementById('r_l').value;
+                let r_t = document.getElementById('r_t').value;
+                let r_w = document.getElementById('r_w').value;
+                let dims_r = (r_l || r_t || r_w) ? ` (довжина ${r_l || '-'}, товщина ${r_t || '-'}, ширина ${r_w || '-'})` : ``;
+                h += `<p>Об'єм ${r_type} за методом ${method}: <strong>${rv} см³</strong>${dims_r};</p>`;
+            }
+            
+            if (lv) {
+                let l_type = getMsValue('ms_l_type') || "ліва частка";
+                let l_l = document.getElementById('l_l').value;
+                let l_t = document.getElementById('l_t').value;
+                let l_w = document.getElementById('l_w').value;
+                let dims_l = (l_l || l_t || l_w) ? ` (довжина ${l_l || '-'}, товщина ${l_t || '-'}, ширина ${l_w || '-'})` : ``;
+                h += `<p>Об'єм ${l_type} за методом ${method}: <strong>${lv} см³</strong>${dims_l};</p>`;
+            }
         }
         
-        let isthmus_s = getMsValue('ms_isthmus_state') || "___";
-        let isthmus_c = document.getElementById('isthmus_cm').value ? document.getElementById('isthmus_cm').value + " см" : "";
-        h += `<p><strong>Перешийок:</strong> ${isthmus_s} ${isthmus_c}</p>`;
+        let isthmus_s = getMsValue('ms_isthmus_state');
+        let isthmus_c = document.getElementById('isthmus_cm').value.trim();
+        if (isthmus_s || isthmus_c) {
+            let isthmusText = [isthmus_s, isthmus_c].filter(Boolean).join(" ");
+            h += `<p><strong>Перешийок:</strong> ${isthmusText}</p>`;
+        }
         
-        h += `<p><strong>Ехогенність:</strong> ${getMsValue('ms_echo') || "___"}</p>`;
-        h += `<p><strong>Ехоструктура:</strong> ${getMsValue('ms_structure') || "___"}</p>`;
+        let echo = getMsValue('ms_echo');
+        if (echo) h += `<p><strong>Ехогенність:</strong> ${echo}</p>`;
+        
+        let struct = getMsValue('ms_structure');
+        if (struct) h += `<p><strong>Ехоструктура:</strong> ${struct}</p>`;
 
+        // Об'ємні утворення
         let nodGen = getMsValue('ms_n_general');
-        h += `<p><strong>Об'ємні утворення щ/з:</strong> ${nodGen}</p>`;
-        if(nodGen.includes("Виявлені")) {
-            let nodules = document.getElementById('page-thyroid').querySelectorAll('.nodule-item');
+        let nodules = document.getElementById('page-thyroid').querySelectorAll('.nodule-item');
+        if (nodGen || nodules.length > 0) {
+            if (nodGen) h += `<p><strong>Об'ємні утворення щ/з:</strong> ${nodGen}</p>`;
+            else if (nodules.length > 0) h += `<p><strong>Об'ємні утворення щ/з:</strong></p>`;
+            
             nodules.forEach(n => {
                 let msList = n.querySelectorAll('.ms-container');
-                h += `<p style="margin-left: 20px;">- ${getMsValFromEl(msList[0])}; форма: ${getMsValFromEl(msList[1])}; розміри: ${formatSize(n.querySelector('.n_size').value)}; ехогенність: ${getMsValFromEl(msList[2])}; структура: ${getMsValFromEl(msList[3])}; контури: ${getMsValFromEl(msList[4])}; кровоплин при КДК: ${getMsValFromEl(msList[5])}; EU-TIRADS: ${getMsValFromEl(msList[6])}.</p>`;
+                let parts = [];
+                
+                let vLoc = getMsValFromEl(msList[0]);
+                let vForm = getMsValFromEl(msList[1]);
+                let vSize = n.querySelector('.n_size').value.trim();
+                let vEchog = getMsValFromEl(msList[2]);
+                let vStruct = getMsValFromEl(msList[3]);
+                let vCont = getMsValFromEl(msList[4]);
+                let vKdk = getMsValFromEl(msList[5]);
+                let vTirads = getMsValFromEl(msList[6]);
+
+                if (vLoc) parts.push(vLoc);
+                if (vForm) parts.push(`форма: ${vForm}`);
+                if (vSize) parts.push(`розміри: ${vSize}`);
+                if (vEchog) parts.push(`ехогенність: ${vEchog}`);
+                if (vStruct) parts.push(`структура: ${vStruct}`);
+                if (vCont) parts.push(`контури: ${vCont}`);
+                if (vKdk) parts.push(`кровоплин при КДК: ${vKdk}`);
+                if (vTirads) parts.push(`EU-TIRADS: ${vTirads}`);
+
+                if(parts.length > 0) h += `<p style="margin-left: 20px;">- ${parts.join('; ')}.</p>`;
             });
         }
 
-        h += `<p><strong>Кровоплин щ/залози при КДК:</strong> ${getMsValue('ms_kdk') || "___"}</p>`;
+        // Кровоплин
+        let kdkMain = getMsValue('ms_kdk');
+        if (kdkMain) h += `<p><strong>Кровоплин щ/залози при КДК:</strong> ${kdkMain}</p>`;
 
-        h += `<p><strong>Лімфатичні вузли:</strong> ${getMsValue('ms_ln_general') || "___"}</p>`;
+        // Лімфатичні вузли
+        let lnGen = getMsValue('ms_ln_general');
         let lymphs = document.getElementById('page-thyroid').querySelectorAll('.lymph-item');
-        lymphs.forEach(l => {
-            let msList = l.querySelectorAll('.ms-container');
-            h += `<p style="margin-left: 20px;">- ${getMsValFromEl(msList[0])}; кількість: ${getMsValFromEl(msList[1])}; форма: ${getMsValFromEl(msList[2])}; розміри: ${formatSize(l.querySelector('.l_size').value)}; структура: ${getMsValFromEl(msList[3])}; ехогенність: ${getMsValFromEl(msList[4])}; контури: ${getMsValFromEl(msList[5])}.</p>`;
-        });
+        if (lnGen || lymphs.length > 0) {
+            if (lnGen) h += `<p><strong>Лімфатичні вузли:</strong> ${lnGen}</p>`;
+            else if (lymphs.length > 0) h += `<p><strong>Лімфатичні вузли:</strong></p>`;
 
-        h += `<p><strong>Прищитоподібні залози:</strong> ${getMsValue('ms_pt_general') || "___"}</p>`;
+            lymphs.forEach(l => {
+                let msList = l.querySelectorAll('.ms-container');
+                let parts = [];
+                
+                let vLoc = getMsValFromEl(msList[0]);
+                let vQty = getMsValFromEl(msList[1]);
+                let vForm = getMsValFromEl(msList[2]);
+                let vSize = l.querySelector('.l_size').value.trim();
+                let vStruct = getMsValFromEl(msList[3]);
+                let vEchog = getMsValFromEl(msList[4]);
+                let vCont = getMsValFromEl(msList[5]);
+
+                if (vLoc) parts.push(vLoc);
+                if (vQty) parts.push(`кількість: ${vQty}`);
+                if (vForm) parts.push(`форма: ${vForm}`);
+                if (vSize) parts.push(`розміри: ${vSize}`);
+                if (vStruct) parts.push(`структура: ${vStruct}`);
+                if (vEchog) parts.push(`ехогенність: ${vEchog}`);
+                if (vCont) parts.push(`контури: ${vCont}`);
+
+                if(parts.length > 0) h += `<p style="margin-left: 20px;">- ${parts.join('; ')}.</p>`;
+            });
+        }
+
+        // Прищитоподібні залози
+        let ptGen = getMsValue('ms_pt_general');
         let paras = document.getElementById('page-thyroid').querySelectorAll('.parathyroid-item');
-        paras.forEach(p => {
-            let msList = p.querySelectorAll('.ms-container');
-            h += `<p style="margin-left: 20px;">- Локалізація: ${getMsValFromEl(msList[0])}, стан: ${getMsValFromEl(msList[1])}, розміри: ${formatSize(p.querySelector('.p_size').value)}</p>`;
-        });
+        if (ptGen || paras.length > 0) {
+            if (ptGen) h += `<p><strong>Прищитоподібні залози:</strong> ${ptGen}</p>`;
+            else if (paras.length > 0) h += `<p><strong>Прищитоподібні залози:</strong></p>`;
 
-        h += `<p><strong>Додаткові утворення шиї:</strong> ${getMsValue('ms_nm_general') || "___"}</p>`;
+            paras.forEach(p => {
+                let msList = p.querySelectorAll('.ms-container');
+                let parts = [];
+
+                let vLoc = getMsValFromEl(msList[0]);
+                let vState = getMsValFromEl(msList[1]);
+                let vSize = p.querySelector('.p_size').value.trim();
+
+                if (vLoc) parts.push(`Локалізація: ${vLoc}`);
+                if (vState) parts.push(`стан: ${vState}`);
+                if (vSize) parts.push(`розміри: ${vSize}`);
+
+                if(parts.length > 0) h += `<p style="margin-left: 20px;">- ${parts.join(', ')}.</p>`;
+            });
+        }
+
+        // Додаткові утворення шиї
+        let nmGen = getMsValue('ms_nm_general');
         let masses = document.getElementById('page-thyroid').querySelectorAll('.neckmass-item');
-        masses.forEach(m => {
-            let msList = m.querySelectorAll('.ms-container');
-            h += `<p style="margin-left: 20px;">- Локалізація: ${getMsValFromEl(msList[0])}; форма: ${getMsValFromEl(msList[1])}; розміри: ${formatSize(m.querySelector('.m_size').value)}; ехогенність: ${getMsValFromEl(msList[2])}; структура: ${getMsValFromEl(msList[3])}; контури: ${getMsValFromEl(msList[4])}.</p>`;
-        });
+        if (nmGen || masses.length > 0) {
+            if (nmGen) h += `<p><strong>Додаткові утворення шиї:</strong> ${nmGen}</p>`;
+            else if (masses.length > 0) h += `<p><strong>Додаткові утворення шиї:</strong></p>`;
 
-        h += `<p><strong>Заключення:</strong></p>`;
+            masses.forEach(m => {
+                let msList = m.querySelectorAll('.ms-container');
+                let parts = [];
+
+                let vLoc = getMsValFromEl(msList[0]);
+                let vForm = getMsValFromEl(msList[1]);
+                let vSize = m.querySelector('.m_size').value.trim();
+                let vEchog = getMsValFromEl(msList[2]);
+                let vStruct = getMsValFromEl(msList[3]);
+                let vCont = getMsValFromEl(msList[4]);
+
+                if (vLoc) parts.push(`Локалізація: ${vLoc}`);
+                if (vForm) parts.push(`форма: ${vForm}`);
+                if (vSize) parts.push(`розміри: ${vSize}`);
+                if (vEchog) parts.push(`ехогенність: ${vEchog}`);
+                if (vStruct) parts.push(`структура: ${vStruct}`);
+                if (vCont) parts.push(`контури: ${vCont}`);
+
+                if(parts.length > 0) h += `<p style="margin-left: 20px;">- ${parts.join('; ')}.</p>`;
+            });
+        }
+
+        // Заключення
         let signs = getMsValue('ms_c_signs');
-        if(signs) h += `<p>УЗ-ознаки: ${signs}</p>`;
-        
         let tirads = getMsValue('ms_c_tirads');
-        if(tirads) h += `<p>EU-TIRADS: ${tirads}</p>`;
-        
-        let conc = document.getElementById('c_conclusion').value;
-        if(conc) h += `<p>Висновок: ${conc}</p>`;
-        
+        let conc = document.getElementById('c_conclusion').value.trim();
         let recom = getMsValue('ms_c_recom');
-        if(recom) h += `<p>Рекомендовано:<br>${recom.replace(/, /g, '<br>')}</p>`;
+
+        if (signs || tirads || conc || recom) {
+            h += `<p><strong>Заключення:</strong></p>`;
+            if (signs) h += `<p>УЗ-ознаки: ${signs}</p>`;
+            if (tirads) h += `<p>EU-TIRADS: ${tirads}</p>`;
+            if (conc) h += `<p>Висновок: ${conc}</p>`;
+            if (recom) h += `<p>Рекомендовано:<br>${recom.replace(/, /g, '<br>')}</p>`;
+        }
 
         h += `</div>`;
 
