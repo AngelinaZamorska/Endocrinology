@@ -711,14 +711,64 @@
         return val + " мм";
     }
 
-    // --- КОПІЮВАННЯ HTML У БУФЕР (НАДІЙНИЙ МЕТОД) ---
+    // --- КОПІЮВАННЯ HTML У БУФЕР (ОЧИЩЕНИЙ ВІД СТИЛІВ ТЕМИ) ---
     function copyToClipboard(htmlContent, btnId, defaultText) {
+        // 1. Створюємо тимчасовий контейнер для обробки HTML
+        let tempDiv = document.createElement("div");
+        tempDiv.innerHTML = htmlContent;
+
+        // 2. ОЧИЩАЄМО ВІД СТИЛІВ: видаляємо всі атрибути (style, class) з усіх тегів
+        let elements = tempDiv.querySelectorAll('*');
+        elements.forEach(el => {
+            while (el.attributes.length > 0) {
+                el.removeAttribute(el.attributes[0].name);
+            }
+        });
+
+        // Тепер у нас є чистий HTML (тільки <div>, <p>, <strong>, <ul>, <li>)
+        let cleanHTML = tempDiv.innerHTML;
+        let plainText = tempDiv.innerText;
+
+        // Функція для візуального підтвердження на кнопці
+        const showSuccess = () => {
+            let btn = document.getElementById(btnId);
+            if(btn) {
+                btn.innerHTML = "✅ СКОПІЙОВАНО! Вставляйте у МІС";
+                btn.style.backgroundColor = "#2ecc71";
+                setTimeout(() => {
+                    btn.innerHTML = defaultText;
+                    btn.style.backgroundColor = "#27ae60";
+                }, 3000);
+            }
+        };
+
+        // 3. Копіюємо за допомогою сучасного Clipboard API
+        if (navigator.clipboard && window.ClipboardItem) {
+            const clipboardItem = new ClipboardItem({
+                'text/html': new Blob([cleanHTML], { type: 'text/html' }),
+                'text/plain': new Blob([plainText], { type: 'text/plain' })
+            });
+
+            navigator.clipboard.write([clipboardItem]).then(() => {
+                showSuccess();
+            }).catch(err => {
+                console.warn("Помилка Clipboard API, спроба запасного методу...", err);
+                fallbackCopy(cleanHTML, showSuccess);
+            });
+        } else {
+            // Запасний метод для старих браузерів
+            fallbackCopy(cleanHTML, showSuccess);
+        }
+    }
+
+    // Запасний метод копіювання (якщо сучасний API заблоковано)
+    function fallbackCopy(cleanHTML, successCallback) {
         let tempDiv = document.createElement("div");
         tempDiv.style.position = "absolute";
         tempDiv.style.left = "-9999px";
         tempDiv.style.top = "-9999px";
         tempDiv.setAttribute("contenteditable", "true");
-        tempDiv.innerHTML = htmlContent;
+        tempDiv.innerHTML = cleanHTML;
         document.body.appendChild(tempDiv);
 
         let range = document.createRange();
@@ -730,13 +780,7 @@
 
         try {
             document.execCommand('copy');
-            let btn = document.getElementById(btnId);
-            btn.innerHTML = "✅ СКОПІЙОВАНО! Вставляйте у МІС";
-            btn.style.backgroundColor = "#2ecc71";
-            setTimeout(() => {
-                btn.innerHTML = defaultText;
-                btn.style.backgroundColor = "#27ae60";
-            }, 3000);
+            successCallback();
         } catch (err) {
             alert("Помилка при копіюванні: " + err);
         }
@@ -744,7 +788,6 @@
         selection.removeAllRanges();
         document.body.removeChild(tempDiv);
     }
-
     // =======================================================
     // ГЕНЕРАТОР: ЩИТОПОДІБНА ЗАЛОЗА
     // =======================================================
